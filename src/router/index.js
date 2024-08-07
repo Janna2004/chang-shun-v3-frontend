@@ -20,33 +20,8 @@ const routes = [
   {
     path: '/home',
     name: 'Home',
-    component: () => import('@/views/HomePage1.vue')
+    component: () => import('@/views/HomePage.vue')
   },
-  {
-    path: '/home2',
-    name: 'Home2',
-    component: () => import('@/views/HomePage2.vue')
-  },
-  {
-    path: '/home3',
-    name: 'Home3',
-    component: () => import('@/views/HomePage3.vue')
-  },
-  {
-    path: '/home4',
-    name: 'Home4',
-    component: () => import('@/views/HomePage4.vue')
-  },   
-  {
-    path: '/home5',
-    name: 'Home5',
-    component: () => import('@/views/HomePage5.vue')
-  }, 
-  {
-    path: '/home6',
-    name: 'Home6',
-    component: () => import('@/views/HomePage6.vue')
-  }, 
   {
     path: '/about',
     name: 'About',
