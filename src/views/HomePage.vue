@@ -1,12 +1,31 @@
 <script>
 import { DotChartOutlined, WarningOutlined } from '@ant-design/icons-vue'
+import { message } from 'ant-design-vue'
+import MarkdownViewer from '@/components/global/MarkdownViewer.vue'
 
 export default {
   name: 'HomePage',
-  components: { DotChartOutlined, WarningOutlined },
+  components: { DotChartOutlined, WarningOutlined, MarkdownViewer },
   data() {
     return {
       currentModule: 'soil', // 用于跟踪当前显示的模块
+      // 登录注册相关
+      login: {
+        phone: '',
+        password: ''
+      },
+      register: {
+        username: '',
+        phone: '',
+        code: '',
+        password1: '',
+        password2: ''
+      },
+      loginLoading: false,
+      registerLoading: false,
+      isRegister: false,
+      sendCodeInfo: '发送验证码',
+      // 背景图片轮播
       bgImg: {
         index: 0,
         images: [
@@ -14,20 +33,104 @@ export default {
           'https://www.gzcsx.gov.cn/syqt/jxcsbjqh/202310/W020231017427000118087_ORIGIN.png'
         ]
       },
+      // 侧边栏模块
       tools: [
         {
           icon: DotChartOutlined,
           name: '土壤数据监控',
           path: '/soil-monitoring'
-        },
-      ]
+        }
+      ],
+      // 用户指南
+      markdownText: ''
+    }
+  },
+  beforeMount() {
+    if (this.currentModule === 'setting') {
+      this.loadMarkdown();
+    }
+  },
+  watch: {
+    currentModule(newValue) {
+      if (newValue === 'setting') {
+        this.loadMarkdown();
+      }
     }
   },
   methods: {
     changeModule(module) {
       this.currentModule = module;
+    },
+    // 登录注册相关
+    async userRegister () {
+      if (this.register.password1 !== this.register.password2) {
+        message.error('两次密码不一致！')
+        return
+      }
+      this.registerLoading = true
+      await this.$store.dispatch('register', {
+        username: this.register.username,
+        password: this.register.password1,
+        phone: this.register.phone,
+        code: this.register.code
+      }).then(() => {
+        message.info('注册成功！')
+        this.$router.push({ name: 'Home' })
+      }).catch(err => {
+        message.error('注册失败！')
+        console.log(err)
+      }).finally(() => {
+        this.registerLoading = false
+      })
+    },
+    async userLogin () {
+      this.loginLoading = true
+      this.$store.dispatch('login', this.login).then(() => {
+        message.info('登录成功！')
+        this.$router.push({ name: 'Home' })
+      }).catch(err => {
+        if (err.status === 401) message.error('账号不存在或密码错误！')
+        else message.error('登录失败！')
+        console.log(err)
+      }).finally(() => {
+        this.loginLoading = false
+      })
+    },
+    async sendCode () {
+      if (this.register.phone.length !== 11 || !this.register.phone.startsWith('1')) {
+        message.error('手机号格式不正确！')
+        return
+      }
+      await this.$axios.post('/user/phone-verify', {
+        phone: this.register.phone
+      }).then(() => {
+        message.info('验证码发送成功！')
+      }).catch(err => {
+        message.error('验证码发送失败！')
+        console.log(err)
+      }).finally(() => {
+        // 倒计时60秒
+        let time = 60
+        this.sendCodeInfo = `${time}秒后重发`
+        const timer = setInterval(() => {
+          if (time === 0) {
+            clearInterval(timer)
+            this.sendCodeInfo = '发送验证码'
+          } else {
+            this.sendCodeInfo = `${time}秒后重发`
+            time--
+          }
+        }, 1000)
+      })
+    },
+    // 用户指南相关
+    loadMarkdown() {
+      this.$axios.get('@/instructions.md').then((res) => {
+        this.markdownText = res.data;
+      });
     }
   },
+  inject: ['$axios'],
   mounted() {
     // 主页背景图片轮播
     setInterval(() => {
@@ -49,104 +152,167 @@ export default {
           <li id="warning" @click="changeModule('warning')" :class="{'active-item':currentModule === 'warning', 'lighten': currentModule === 'warning' }">预警信息</li>
           <li id="uav" @click="changeModule('uav')" :class="{'active-item':currentModule === 'uav', 'lighten': currentModule === 'uav' }">无人拍摄</li>
           <p id="tools">Tools</p>
-          <router-link :to="{ name: isLogin ? 'UserInfo' : 'Login' }" exact>
+          <!--router-link :to="{ name: isLogin ? 'UserInfo' : 'Login' }" exact>
             <li id="user">用户中心</li>
           </router-link>
           <router-link to="/about" exact>
             <li id="setting">使用指南</li>
-          </router-link>
+          </router-link-->
+          <li id="user"  @click="changeModule('user') " :class="{'active-item':currentModule === 'user', 'lighten': currentModule === 'user'}" >用户中心</li>
+          <li id="setting"  @click="changeModule('setting') " :class="{'active-item':currentModule === 'setting', 'lighten': currentModule === 'setting'}" >使用指南</li>
         </ul>
       </a-col>
       <a-col span="20">
-        <div class="img" :style="{ backgroundImage: `url(${bgImg.images[bgImg.index]})` }">
-          <div class="changshun" />
-        </div>
-        <a-row>
-          <a-col span="14">
-            <div id="left">
-              <template v-if="currentModule === 'soil'">
-                <t-left>
-                  <h1 class="topic">土壤监测</h1>
-                  <p class="text">土壤监测是指对土壤的物理、化学、生物等特性进行定期检测和分析的过程。</p>
-                  <div id="more">
-                    <p>了解更多</p>
-                  </div>
-                </t-left>
-              </template>
-              <template v-else-if="currentModule === 'air'">
-                <t-left>
-                  <h1 class="topic">空气监测</h1>
-                  <p class="text">空气监测是对大气中空气质量参数进行定期检测和分析的过程，是环境保护工作中至关重要的一个方面。</p>
-                  <div id="more">
-                    <p>了解更多</p>
-                  </div>
-                </t-left>
-              </template>
-              <template v-else-if="currentModule === 'warning'">
-                <t-left>
-                  <h1 class="topic">预警信息</h1>
-                  <p class="text">预警信息指的是对农作物、林木、花卉等植物病虫害状况进行定期监测和分析所得到的信息。</p>
-                  <div id="more">
-                    <p>了解更多</p>
-                  </div>
-                </t-left>
-              </template>
-              <template v-else-if="currentModule === 'uav'">
-                <t-left>
-                  <h1 class="topic">无人拍摄</h1>
-                  <p class="text">无人拍摄指的是利用无人机进行空中观察和图像记录，以便进行实时的农作物监测、农业资源管理和病虫害防治。</p>
-                  <div id="more">
-                    <p>了解更多</p>
-                  </div>
-                </t-left>
-              </template>
-            </div>
-          </a-col>
-          <a-col span="10">
-            <div id="right">
-              <template v-if="currentModule === 'soil'">
-                <t-right>
-                  <h1 class="topic">土壤<br />数据监控</h1>
-                  <router-link to="/soil-monitoring" id="tool" exact>
-                    <div id="enter">
-                      <p>点击进入</p>
+        <template v-if="['soil', 'air', 'warning', 'uav'].includes(currentModule)">
+          <div class="img" :style="{ backgroundImage: `url(${bgImg.images[bgImg.index]})` }">
+            <div class="changshun" />
+          </div>
+          <a-row>
+            <a-col span="14">
+              <div id="left">
+                <template v-if="currentModule === 'soil'">
+                  <t-left>
+                    <h1 class="topic">土壤监测</h1>
+                    <p class="text">土壤监测是指对土壤的物理、化学、生物等特性进行定期检测和分析的过程。</p>
+                    <div id="more">
+                      <p>了解更多</p>
                     </div>
-                  </router-link>
-                </t-right>
-              </template>
-              <template v-else-if="currentModule === 'air'">
-                <t-right>
-                  <h1 class="topic">空气<br />数据监控</h1>
-                  <router-link to="/air-monitoring" id="tool" exact>
-                    <div id="enter">
-                      <p>点击进入</p>
+                  </t-left>
+                </template>
+                <template v-else-if="currentModule === 'air'">
+                  <t-left>
+                    <h1 class="topic">空气监测</h1>
+                    <p class="text">空气监测是对大气中空气质量参数进行定期检测和分析的过程，是环境保护工作中至关重要的一个方面。</p>
+                    <div id="more">
+                      <p>了解更多</p>
                     </div>
-                  </router-link>
-                </t-right>
-              </template>
-              <template v-else-if="currentModule === 'warning'">
-                <t-right>
-                  <h1 class="topic">预警<br />信息监控</h1>
-                  <router-link to="/alert" id="tool" exact>
-                    <div id="enter">
-                      <p>点击进入</p>
+                  </t-left>
+                </template>
+                <template v-else-if="currentModule === 'warning'">
+                  <t-left>
+                    <h1 class="topic">预警信息</h1>
+                    <p class="text">预警信息指的是对农作物、林木、花卉等植物病虫害状况进行定期监测和分析所得到的信息。</p>
+                    <div id="more">
+                      <p>了解更多</p>
                     </div>
-                  </router-link>
-                </t-right>
-              </template>
-              <template v-else-if="currentModule === 'uav'">
-                <t-right>
-                  <h1 class="topic">无人<br />拍摄监控</h1>
-                  <router-link to="/UAVControl" id="tool" exact>
-                    <div id="enter">
-                      <p>点击进入</p>
+                  </t-left>
+                </template>
+                <template v-else-if="currentModule === 'uav'">
+                  <t-left>
+                    <h1 class="topic">无人拍摄</h1>
+                    <p class="text">无人拍摄指的是利用无人机进行空中观察和图像记录，以便进行实时的农作物监测、农业资源管理和病虫害防治。</p>
+                    <div id="more">
+                      <p>了解更多</p>
                     </div>
-                  </router-link>
-                </t-right>
-              </template>
-            </div>
-          </a-col>
-        </a-row>
+                  </t-left>
+                </template>
+              </div>
+            </a-col>
+            <a-col span="10">
+              <div id="right">
+                <template v-if="currentModule === 'soil'">
+                  <t-right>
+                    <h1 class="topic">土壤<br />数据监控</h1>
+                    <router-link to="/soil-monitoring" id="tool" exact>
+                      <div id="enter">
+                        <p>点击进入</p>
+                      </div>
+                    </router-link>
+                  </t-right>
+                </template>
+                <template v-else-if="currentModule === 'air'">
+                  <t-right>
+                    <h1 class="topic">空气<br />数据监控</h1>
+                    <router-link to="/air-monitoring" id="tool" exact>
+                      <div id="enter">
+                        <p>点击进入</p>
+                      </div>
+                    </router-link>
+                  </t-right>
+                </template>
+                <template v-else-if="currentModule === 'warning'">
+                  <t-right>
+                    <h1 class="topic">预警<br />信息监控</h1>
+                    <router-link to="/alert" id="tool" exact>
+                      <div id="enter">
+                        <p>点击进入</p>
+                      </div>
+                    </router-link>
+                  </t-right>
+                </template>
+                <template v-else-if="currentModule === 'uav'">
+                  <t-right>
+                    <h1 class="topic">无人<br />拍摄监控</h1>
+                    <router-link to="/UAVControl" id="tool" exact>
+                      <div id="enter">
+                        <p>点击进入</p>
+                      </div>
+                    </router-link>
+                  </t-right>
+                </template>
+              </div>
+            </a-col>
+          </a-row>
+        </template>
+        <template v-else-if="currentModule === 'user' || currentModule === 'setting'">
+          <div id="content" class="translucent-box">
+            <template v-if="currentModule === 'user'">
+              <!-- 插入 loginpage 的内容 -->
+              <div style="height: 100%; width: 100%">
+                <div class="user">
+                  <div class="ad" :style="{order: isRegister ? 0 : 1}">
+                    海报/宣传图
+                  </div>
+                  <!--登陆界面-->
+                  <div class="info" v-if="!isRegister" :style="{order: 0, width: '100%' }">
+                    <div style="font-size: 2em;color: #3e3e3e;width: 100%">用户登录</div>
+                    <div style="width: 80%;margin-top: 10vh">
+                      <a-input v-model:value="login.phone" placeholder="输入手机号" />
+                      <a-input-password v-model:value="login.password" placeholder="输入密码" @keydown.enter="userLogin"/>
+                      <a-button type="primary" style="width: 100%" :loading="loginLoading"
+                                :disabled="login.password.length === 0 || login.phone.length === 0"
+                                @click="userLogin">登录</a-button>
+                    </div>
+                    <div class="register" style="width: 80%;display: flex;flex-direction: row;">
+                      <a-button type="link" @click="isRegister = true">立即注册</a-button>
+                      <a-button type="link">忘记密码</a-button>
+                    </div>
+                  </div>
+
+                  <!--注册页面-->
+                  <div v-if="isRegister" :style="{ order: 1, width: '100%' }">
+                    <div style="font-size: 2em;color: #3e3e3e;width: 100%">注册</div>
+                    <div style="width: 80%;margin-top: 30px">
+                      <a-input v-model:value="register.username" placeholder="输入用户名" />
+                      <a-input-search v-model:value="register.phone" placeholder="输入手机号"
+                                      :enter-button="sendCodeInfo" @search="sendCode"
+                                      :disabled="sendCodeInfo !== '发送验证码'"/>
+                      <a-input-password v-model:value="register.password1" placeholder="输入密码" />
+                      <a-input-password v-model:value="register.password2" placeholder="重复密码" @keydown.enter="userRegister"/>
+                      <div class="inline-flex">
+                        <a-input v-model:value="register.code" placeholder="输入验证码" />
+                        <p>已有帐号？</p>
+                        <a-button type="link" @click="isRegister = false">登录</a-button>
+                      </div>
+                      <a-button type="primary" style="width: 100%" :loading="registerLoading"
+                                :disabled="register.password1.length === 0 || register.username.length === 0
+                                || register.phone === 0 || register.password2.length === 0"
+                                @click="userRegister">
+                        注册
+                      </a-button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </template>
+            <!--用户指南-->
+            <template v-else-if="currentModule === 'setting'">
+              <div class="setting">
+                <MarkdownViewer :source="markdownText" />
+              </div>
+            </template>
+          </div>
+        </template>
       </a-col>
     </a-row>
   </body>
@@ -379,7 +545,7 @@ ul#side li.active-item {
 }
 
 .lighten::before {
-  filter: brightness(1.2); /* 增加亮度 */
+  filter: brightness(1.4); /* 增加亮度 */
   transition: filter 0.3s ease; /* 添加动画效果 */
 }
 
@@ -475,5 +641,69 @@ t-right div p {
   position: relative;
   top: 18%;
   left: 22%;
+}
+
+/* tools页面样式 */
+.translucent-box{
+  margin-top: 6vh;
+  margin-left: 2vh;
+  margin-right: 7vh;
+  height: 82vh;
+  background-color: #69A67CE5;
+  border-radius: 1.34vw;
+}
+/* 登录注册页面样式 */
+.user {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.user div {
+  width: 45%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.info div input,
+.info:deep(.ant-input-search),
+.info:deep(.ant-input-password) {
+  margin-bottom: 20px;
+}
+
+.register {
+  border-top: 1px #e3e3e3 solid;
+  margin-top: 3vh;
+}
+
+.ad {
+  transition: 1s;
+  border: solid 1px red;
+  border-radius: 1.34vw;
+  height: 82vh;
+}
+
+.register button {
+  display: inline;
+}
+
+.inline-flex {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  flex-direction: row !important;
+  margin-bottom: 20px;
+  width: 100% !important;
+}
+/* 使用指南页面样式 */
+.setting {
+  max-height: 82vh; /* 设置最大高度，根据需要调整 */
+  overflow-y: auto; /* 启用垂直滚动 */
+  padding-right: 2cqb; /* 滚动时右侧留出一些空隙 */
+  border: 1px solid #98ba7c; /* 添加边框以区分滚动区域 */
+  background-color: #f9f9f9; /* 滚动区域背景色 */
+  border-radius: 1.34vw;
 }
 </style>
