@@ -224,88 +224,195 @@ export default {
 
 <template>
   <body>
-  <a-row>
-    <a-col span="4">
-      <ul id="side">
-        <p id="general">无人机控制</p>
-        
-        <router-link to="/home4" exact>
-        <li id="setting">返回</li>
-        </router-link>
-      </ul>
-
-    </a-col>
-    <a-col span="20">
-      <div class="main">
-  <div class="button">
-    <a-button-group>
-      
-      <a-button type="primary" @click="sendRequest('unlock')">飞控解锁</a-button>
-      <a-button type="primary" @click="sendRequest('lock')">飞控上锁</a-button>
-      <a-button type="primary" @click="changeMode()">改变飞控模式</a-button>
-      <a-button type="primary" @click="sendRequest('returnHome')">一键返航</a-button>
-      <a-button type="primary" @click="onekeyTakeoff()">一键起飞</a-button>
-      <a-button type="primary" @click="sendRequest('land')">一键降落</a-button>
-      <a-button type="primary" @click="horizontalMove()">平移</a-button>
-      <a-button type="primary" @click="sendRequest('hCalibrate')">水平校准</a-button>
-      <a-button type="primary" @click="sendRequest('mCalibrate')">磁力计校准</a-button>
-      <a-button type="primary" @click="sendRequest('aCalibrate')">6面加速度校准</a-button>
-      <a-button type="primary" @click="sendRequest('gCalibrate')">陀螺仪校准</a-button>
-      
-    </a-button-group>
-  </div>
-    <div class="video">
-      <div class="inner" v-if="recording">
-        <a-row><VideoCameraOutlined class="recording"/>录制中</a-row>
-        <a-row style="margin-top: 1vh">当前帧率：10FPS</a-row>
-        <a-row style="margin-top: 1vh">录制时长：{{duration}}</a-row>
-      </div>
-      <canvas class="video-feed" id="canvas-feed"/>
-      <div class="controller">
-        <div style="color: green" @click="startRecord" v-if="!recording && supported">开始录制</div>
-        <div style="color: red" v-if="!supported">不支持录制</div>
-        <div style="color: red" @click="endRecord" v-if="recording">停止录制</div>
-        <div style="color: #2B3F52" @click="getFrame">截取当前帧</div>
-      </div>
-    </div>
-  </div>
-  <a-modal title="参数输入" v-model:open="input.input" @ok="sendRequest()">
-    <p>{{input.notes}}</p>
-    <a-input v-for="(item, name, index) in input.waiting" :key="index" v-model:value="input[name]" style="margin-top: 2vh">
-      <template #prefix>
-        {{item}}
-      </template>
-    </a-input>
-  </a-modal>
-    </a-col>
-  
-</a-row>
+    <a-row>
+      <a-col span="4">
+        <ul id="side">
+          <p id="general">Correcting</p>
+          <li @click="sendRequest('hCalibrate')">水平校准</li>
+          <li @click="sendRequest('mCalibrate')">磁力计校准</li>
+          <li @click="sendRequest('aCalibrate')">6面加速度校准</li>
+          <li @click="sendRequest('gCalibrate')">陀螺仪校准</li>
+          <p id="general">Protective</p>
+          <li @click="sendRequest('unlock')">飞控解锁</li>
+          <li @click="sendRequest('lock')">飞控上锁</li>
+          <p id="general">_______________</p>
+          <router-link to="/home" exact>
+            <li id="setting">返回</li>
+          </router-link>
+        </ul>
+      </a-col>
+      <a-col span="20">
+        <div class="main">
+          <div class="top">
+            <h3>无人机控制</h3>
+            <div class="button-group">
+              <p>飞控模式</p>
+              <div class="custom-button-group">
+                <button class="custom-button" @click="changeMode(0)">Manual</button>
+                <button class="custom-button" @click="changeMode(1)">Altitude</button>
+                <button class="custom-button" @click="changeMode(2)">Position</button>
+                <button class="custom-button" @click="changeMode(3)">Auto</button>
+              </div>
+              <p>姿态控制</p>
+              <div class="custom-button-group">
+                <button class="custom-button" @click="sendRequest('returnHome')">一键返航</button>
+                <button class="custom-button" @click="onekeyTakeoff()">一键起飞</button>
+                <button class="custom-button" @click="sendRequest('land')">一键降落</button>
+                <button class="custom-button" @click="horizontalMove()">平移</button>
+              </div>
+            </div>
+          </div>
+          <div class="video">
+            <div class="inner" v-if="recording">
+              <a-row><VideoCameraOutlined class="recording"/>录制中</a-row>
+              <a-row style="margin-top: 1vh">当前帧率：10FPS</a-row>
+              <a-row style="margin-top: 1vh">录制时长：{{duration}}</a-row>
+            </div>
+            <canvas class="video-feed" id="canvas-feed"/>
+            <div class="controller">
+              <div style="color: green" @click="startRecord" v-if="!recording && supported">开始录制</div>
+              <div style="color: red" v-if="!supported">不支持录制</div>
+              <div style="color: red" @click="endRecord" v-if="recording">停止录制</div>
+              <div style="color: #2B3F52" @click="getFrame">截取当前帧</div>
+            </div>
+          </div>
+        </div>
+        <a-modal title="参数输入" v-model:open="input.input" @ok="sendRequest()">
+          <p>{{input.notes}}</p>
+          <a-input v-for="(item, name, index) in input.waiting" :key="index" v-model:value="input[name]" style="margin-top: 2vh">
+            <template #prefix>
+              {{item}}
+            </template>
+          </a-input>
+        </a-modal>
+      </a-col>
+    </a-row>
   </body>
 </template>
 
 <style scoped>
-.main {
-  display: flex;
-  justify-content: center ;
-  align-items: center;
-  height: 100%;
-  flex-direction: column;
-  margin-top: -2.5vh;
+body {
+  background-size: cover;
+  background-color: #c8ecc9;
+  background: url(../css/background-image.png);
 }
 
-.button{
-  
+ul#side {
+  list-style: none;
+  margin: 2.6vw auto 4.6vw 0px;
   position: relative;
-  
+  width: 90%;
+  background-color: #c8ecc9;
+  padding-left: 0px;
+  border-top-right-radius: 2vw;
+  border-bottom-right-radius: 2vw;
+  font-family: '等线';
+  border: #69a67c 0.13vw solid;
+}
+
+ul#side li {
+  font-size: 2.13vw;
+  color: black;
+  position: relative;
+  background-color: #b0dab5;
+  border-top-right-radius: 0.66vw;
+  border-bottom-right-radius: 0.66vw;
+  width: 85%;
+  padding-top: 1.3vh;
+  padding-bottom: 1.2vh;
+  padding-left: 1.13vw;
+  margin-bottom: 2.5vh;
+  cursor: pointer;
+}
+
+ul#side li.active-item {
+  background-color: rgb(105, 166, 124);
+  color: white;
+  transform: translateX(18%);
+  transition: transform 0.3s ease;
+  border-top-right-radius: 0vw;
+  border-bottom-right-radius: 0vw;
+  border-top-left-radius: 0.66vw;
+  border-bottom-left-radius: 0.66vw;
+}
+
+#general {
+  color: #69a67c;
+  font-size: 2vw;
+  margin: 1vh auto 1.33vh 0.46vw;
+  padding-top: 1.3vh;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding-top: 2vh;
+}
+
+.top {
+  width: 95%;
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  background-color: rgb(200, 236, 201);
+  margin: 2vw auto;
+  padding: 2vh 2vw;
+  border-radius: 2vw;
+  font-family: '等线';
+  border: #69a67c 0.13vw solid;
+}
+
+.button-group {
+  margin-bottom: 2vh;
+  text-align: center;
+  display: flex ;
+  align-items: center ;
+  justify-content: flex-start ;
+  flex-direction: row ;
+}
+
+.custom-button-group {
+  display: flex;
+  gap: 1vw;
+}
+
+.custom-button {
+  background-color: #69A67C;
+  color: black;
+  border: none;
+  padding: 0.2vw 0.6vw;
+  cursor: pointer;
+}
+
+.custom-button:first-child {
+  border-top-left-radius: 1.33vw;
+  border-bottom-left-radius: 1.33vw;
+}
+
+.custom-button:last-child {
+  border-top-right-radius: 1.33vw;
+  border-bottom-right-radius: 1.33vw;
+}
+
+.custom-button:hover {
+  background-color: #558B6E;
+  color: white;
+}
+
+.custom-button.active {
+  background-color: #558B6E;
+  color: white;
 }
 
 .video {
-  width:70vw ;
-  
-  margin-top: 6vh;
+  width: 95%;
   user-select: none;
   position: relative;
   cursor: pointer;
+  margin: 2vw auto;
+  margin-top: 0vw;
 }
 
 .video:hover .controller {
@@ -327,13 +434,13 @@ export default {
 }
 
 .video-feed {
-
   border-radius: 1vw;
-
+  width: 100% !important;
+  height: auto !important;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #69A67C ;
+  background-color: #69A67C;
 }
 
 .controller {
@@ -379,33 +486,5 @@ export default {
   to {
     color: rgba(255, 0, 0, 0);
   }
-}
-
-body{
- background-size:cover;
- 
-  background-color: #C8ECC9;
-  background:url(../css/background-image.png);
-}
-
-ul#side {
-  list-style: none ;
-  margin: 2.6vw auto 4.6vw 0px;
-  position:relative;
- width: 90%;
-  background-color: #C8ECC9;
-  padding-left: 0px;
-  border-top-right-radius: 2vw;
-  border-bottom-right-radius: 2vw;
-  height: 83vh;
-  font-family: '等线';
-  border: #69A67C 0.13vw solid;
-}
-
-#general{
-  color: #69A67C;
-  font-size: 2vw;
-  margin:1vh auto 1.33vh 0.46vw;
-  padding-top: 1.3vh;
 }
 </style>

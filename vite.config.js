@@ -2,6 +2,7 @@ import { fileURLToPath, URL } from 'node:url'
 
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+
 export default defineConfig({
   plugins: [
     vue()
@@ -16,10 +17,13 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/api': {
-        target: 'http://1.14.125.238/api',
+      '/chang-shun/api': {
+        target: 'http://1.14.125.238',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '')
+        rewrite: (path) => {
+          console.log('Proxying request:', path);
+          return path.replace(/^\/chang-shun\/api/, '/chang-shun/api')
+        }
       }
     }
   }

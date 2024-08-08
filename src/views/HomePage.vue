@@ -42,7 +42,8 @@ export default {
         }
       ],
       // 用户指南
-      markdownText: ''
+      markdownText: '',
+      isLoggedIn: false
     }
   },
   beforeMount() {
@@ -55,6 +56,19 @@ export default {
       if (newValue === 'setting') {
         this.loadMarkdown();
       }
+    }
+  },
+  computed: {
+    user () {
+      return this.$store.getters.userInfo
+    },
+    userRole () {
+      const userRole = {
+        'super-admin': '超级管理员',
+        admin: '管理员',
+        customer: '游客'
+      }
+      return userRole[this.user.role]
     }
   },
   methods: {
@@ -87,7 +101,8 @@ export default {
       this.loginLoading = true
       this.$store.dispatch('login', this.login).then(() => {
         message.info('登录成功！')
-        this.$router.push({ name: 'Home' })
+        this.isLoggedIn = true
+        this.changeModule('soil')
       }).catch(err => {
         if (err.status === 401) message.error('账号不存在或密码错误！')
         else message.error('登录失败！')
@@ -123,11 +138,33 @@ export default {
         }, 1000)
       })
     },
+    // 用户中心相关
+    logout () {
+      this.$store.dispatch('logout').then(() => {
+        message.info('登出成功！')
+        this.isLoggedIn = false
+        this.changeModule('soil')
+      })
+    },
+    addAdmin () {
+      this.$axios.post('/user/add-admin', {
+        phone: this.phone
+      }).then(res => {
+        message.info('添加成功！')
+        this.phone = ''
+      }).catch(err => {
+        message.error('添加失败！')
+        console.log(err)
+      })
+    },
     // 用户指南相关
     loadMarkdown() {
       this.$axios.get('@/instructions.md').then((res) => {
         this.markdownText = res.data;
       });
+    },
+    handleBack() {
+      this.changeModule('soil');
     }
   },
   inject: ['$axios'],
@@ -257,49 +294,75 @@ export default {
         <template v-else-if="currentModule === 'user' || currentModule === 'setting'">
           <div id="content" class="translucent-box">
             <template v-if="currentModule === 'user'">
-              <!-- 插入 loginpage 的内容 -->
-              <div style="height: 100%; width: 100%">
-                <div class="user">
-                  <div class="ad" :style="{order: isRegister ? 0 : 1}">
-                    海报/宣传图
+              <div v-if="isLoggedIn" style="height: 100%; width: 100%">
+                <!-- 插入 userpage 的内容 -->
+                <a-page-header
+                  style="border-bottom: 1px solid rgb(235, 237, 240); padding: 10px 20px; font-size: 1.1em"
+                  title="用户信息"
+                  @back="handleBack"
+                />
+                <div style="margin: 20px 50px; display: flex">
+                  <a-descriptions :column="1" style="width: 20em">
+                    <a-descriptions-item label="用户名">{{ user.username }}</a-descriptions-item>
+                    <a-descriptions-item label="UID">{{ user.uid }}</a-descriptions-item>
+                    <a-descriptions-item label="权限">{{ userRole }}</a-descriptions-item>
+                  </a-descriptions>
+                  <div>
+                    <a-button @click="logout">登出</a-button>
+                    <a-row v-if="user.role === 'super-admin'" style="margin-top: 40px">
+                      <a-input-group compact>
+                        <a-input v-model:value="phone" style="width: 120px" />
+                        <a-button type="primary" @click="addAdmin">添加管理员</a-button>
+                      </a-input-group>
+                    </a-row>
                   </div>
-                  <!--登陆界面-->
-                  <div class="info" v-if="!isRegister" :style="{order: 0, width: '100%' }">
-                    <div style="font-size: 2em;color: #3e3e3e;width: 100%">用户登录</div>
-                    <div style="width: 80%;margin-top: 10vh">
-                      <a-input v-model:value="login.phone" placeholder="输入手机号" />
-                      <a-input-password v-model:value="login.password" placeholder="输入密码" @keydown.enter="userLogin"/>
-                      <a-button type="primary" style="width: 100%" :loading="loginLoading"
-                                :disabled="login.password.length === 0 || login.phone.length === 0"
-                                @click="userLogin">登录</a-button>
+                </div>
+              </div>
+              <div v-else style="height: 100%; width: 100%">
+                <!-- 插入 loginpage 的内容 -->
+                <div style="height: 100%; width: 100%">
+                  <div class="user">
+                    <div class="ad" :style="{order: isRegister ? 0 : 1}">
+                      海报/宣传图
                     </div>
-                    <div class="register" style="width: 80%;display: flex;flex-direction: row;">
-                      <a-button type="link" @click="isRegister = true">立即注册</a-button>
-                      <a-button type="link">忘记密码</a-button>
-                    </div>
-                  </div>
-
-                  <!--注册页面-->
-                  <div v-if="isRegister" :style="{ order: 1, width: '100%' }">
-                    <div style="font-size: 2em;color: #3e3e3e;width: 100%">注册</div>
-                    <div style="width: 80%;margin-top: 30px">
-                      <a-input v-model:value="register.username" placeholder="输入用户名" />
-                      <a-input-search v-model:value="register.phone" placeholder="输入手机号"
-                                      :enter-button="sendCodeInfo" @search="sendCode"
-                                      :disabled="sendCodeInfo !== '发送验证码'"/>
-                      <a-input-password v-model:value="register.password1" placeholder="输入密码" />
-                      <a-input-password v-model:value="register.password2" placeholder="重复密码" @keydown.enter="userRegister"/>
-                      <div class="inline-flex">
-                        <a-input v-model:value="register.code" placeholder="输入验证码" />
-                        <p>已有帐号？</p>
-                        <a-button type="link" @click="isRegister = false">登录</a-button>
+                    <!--登陆界面-->
+                    <div class="info" v-if="!isRegister" :style="{order: 0, width: '100%' }">
+                      <div style="font-size: 2em;color: #3e3e3e;width: 100%">用户登录</div>
+                      <div style="width: 80%;margin-top: 10vh">
+                        <a-input v-model:value="login.phone" placeholder="输入手机号" />
+                        <a-input-password v-model:value="login.password" placeholder="输入密码" @keydown.enter="userLogin"/>
+                        <a-button type="primary" style="width: 100%" :loading="loginLoading"
+                                  :disabled="login.password.length === 0 || login.phone.length === 0"
+                                  @click="userLogin">登录</a-button>
                       </div>
-                      <a-button type="primary" style="width: 100%" :loading="registerLoading"
-                                :disabled="register.password1.length === 0 || register.username.length === 0
-                                || register.phone === 0 || register.password2.length === 0"
-                                @click="userRegister">
-                        注册
-                      </a-button>
+                      <div class="register" style="width: 80%;display: flex;flex-direction: row;">
+                        <a-button type="link" @click="isRegister = true">立即注册</a-button>
+                        <a-button type="link">忘记密码</a-button>
+                      </div>
+                    </div>
+
+                    <!--注册页面-->
+                    <div v-if="isRegister" :style="{ order: 1, width: '100%' }">
+                      <div style="font-size: 2em;color: #3e3e3e;width: 100%">注册</div>
+                      <div style="width: 80%;margin-top: 30px">
+                        <a-input v-model:value="register.username" placeholder="输入用户名" />
+                        <a-input-search v-model:value="register.phone" placeholder="输入手机号"
+                                        :enter-button="sendCodeInfo" @search="sendCode"
+                                        :disabled="sendCodeInfo !== '发送验证码'"/>
+                        <a-input-password v-model:value="register.password1" placeholder="输入密码" />
+                        <a-input-password v-model:value="register.password2" placeholder="重复密码" @keydown.enter="userRegister"/>
+                        <div class="inline-flex">
+                          <a-input v-model:value="register.code" placeholder="输入验证码" />
+                          <p>已有帐号？</p>
+                          <a-button type="link" @click="isRegister = false">登录</a-button>
+                        </div>
+                        <a-button type="primary" style="width: 100%" :loading="registerLoading"
+                                  :disabled="register.password1.length === 0 || register.username.length === 0
+                                  || register.phone === 0 || register.password2.length === 0"
+                                  @click="userRegister">
+                          注册
+                        </a-button>
+                      </div>
                     </div>
                   </div>
                 </div>
