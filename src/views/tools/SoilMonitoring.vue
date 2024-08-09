@@ -93,7 +93,7 @@ export default {
     </a-row>
 
     <div style="margin-top: 20px;width: 100%">
-      <a-row style="width: 100%">
+      <a-row v-if="loading" style="width: 100%">
         <a-spin :spinning="loading" style="margin: auto;"/>
       </a-row>
       <a-row v-if="!loading" style="width: 100%">
