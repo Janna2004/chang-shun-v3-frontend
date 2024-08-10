@@ -30,6 +30,6 @@ export default {
 #root {
   background-size: cover;
   background-color: #c8ecc9;
-  background: url("@/assets/background-image.png");
+  background: url('@/assets/background-image.png');
 }
 </style>

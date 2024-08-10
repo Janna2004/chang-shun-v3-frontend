@@ -20,9 +20,13 @@ export default {
 </script>
 
 <template>
-  <a-row id="page">
+  <a-row class="page">
     <a-col span="4">
-      <SideMenu :options="options" :multiple="multiple" v-model:selected="_selected" />
+      <SideMenu
+        :options="options"
+        :multiple="multiple"
+        v-model:selected="_selected"
+      />
     </a-col>
     <a-col span="20">
       <slot name="content"></slot>
@@ -31,9 +35,7 @@ export default {
 </template>
 
 <style scoped>
-#page {
-  margin: 0;
-  padding: 0;
-  height: 90vh;
+.page {
+  padding: 2em 0 !important;
 }
 </style>
