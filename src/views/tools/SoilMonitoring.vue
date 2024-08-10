@@ -2,6 +2,8 @@
 import { DownOutlined } from "@ant-design/icons-vue";
 import dayjs from "dayjs";
 import { message } from "ant-design-vue";
+import * as echarts from 'echarts';
+
 export default {
   name: "SoilMonitoring",
   components: { DownOutlined },
@@ -16,7 +18,9 @@ export default {
       timeSelected: false,
 
       selectedIndex: [], // 存储当前选中的索引
-      menuItems: ['温度', '湿度', 'pH值', '电导率', '氮含量', '磷含量', '钾含量']
+      menuItems: ['温度', '湿度', 'pH值', '电导率', '氮含量', '磷含量', '钾含量'],
+
+      chartInstance: null,
     }
   },
   computed: {
@@ -32,27 +36,118 @@ export default {
       };
     },
   },
+  mounted() {
+    this.fetchInstrumentList();
+  },
   methods: {
     dayjs,
-    async fetchData() {
-      if (this.selectId === 0) {
-        message.warn("请选择机器号");
+    fetchInstrumentList() {
+      this.$axios.get("/sensor/data", {
+        params: {
+          sensor_category: "soil",
+        },
+      }).then((res) => {
+        this.instrList = res.data.data;
+      }).catch(error => {
+        console.error("Failed to load instruments", error);
+        message.error("仪器加载失败");
+      });
+    },
+    initChart() {
+      this.chartInstance = echarts.init(this.$refs.chartContainer);
+      this.updateChart();
+    },
+    updateChart() {
+      if (!this.chartInstance) {
         return;
       }
-      if (this.timeSelected && this.time === null) {
-        message.warn("请选择时间");
-        return;
-      }
-      this.loading = true
+      const option = {
+        title: {
+          text: '土壤传感器数据'
+        },
+        tooltip: {
+          trigger: 'axis'
+        },
+        legend: {
+          data: ['温度', '湿度', 'pH值', '电导率', '氮含量', '磷含量', '钾含量']
+        },
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          containLabel: true
+        },
+        xAxis: {
+          type: 'category',
+          boundaryGap: false,
+          data: this.data.map(item => item.sensor_data.detect_time)
+        },
+        yAxis: {
+          type: 'value'
+        },
+        series: [
+          {
+            name: '温度',
+            type: 'line',
+            data: this.data.map(item => item.sensor_data.temperature)
+          },
+          {
+            name: '湿度',
+            type: 'line',
+            data: this.data.map(item => item.sensor_data.humidity)
+          },
+          {
+            name: 'pH值',
+            type: 'line',
+            data: this.data.map(item => item.sensor_data.ph)
+          },
+          {
+            name: '电导率',
+            type: 'line',
+            data: this.data.map(item => item.sensor_data.conductivity)
+          },
+          {
+            name: '氮含量',
+            type: 'line',
+            data: this.data.map(item => item.sensor_data.nitrogen)
+          },
+          {
+            name: '磷含量',
+            type: 'line',
+            data: this.data.map(item => item.sensor_data.phosphorus)
+          },
+          {
+            name: '钾含量',
+            type: 'line',
+            data: this.data.map(item => item.sensor_data.potassium)
+          }
+        ]
+      };
+      this.chartInstance.setOption(option, true); // 使用 true 参数来清除之前的配置
+    },
+    fetchData() {
+      this.loading = true;
       this.$axios.get('/soil-sensor/data', {
-        params: this.convertToJson
+          params: this.convertToJson
       }).then(res => {
-        this.data = res.data.data
-      }).catch(() => {
-        message.error('查询失败')
+          this.data = res.data.data;
+          if (this.data && this.data.length > 0) {
+              this.$nextTick(() => {
+                  if (this.$refs.chartContainer) {
+                      this.initChart();  // Now we're sure the DOM element is there
+                  } else {
+                      console.error('Chart container DOM element is not available.');
+                  }
+              });
+          } else {
+              message.info('暂无数据');
+          }
+      }).catch(error => {
+          console.error('查询失败', error);
+          message.error('查询失败');
       }).finally(() => {
-        this.loading = false
-      })
+          this.loading = false;
+      });
     },
     handleClick(index) {
       const selectedIndexPosition = this.selectedIndex.indexOf(index);
@@ -67,21 +162,10 @@ export default {
 
       // this.fetchData(); // 视情况决定是否每次点击都调用 fetchData
     }
-  },
-  beforeMount() {
-    // 获取仪器编号
-    this.$axios
-      .get("/sensor/data", {
-        params: {
-          sensor_category: "soil",
-        },
-      })
-      .then((res) => {
-        this.instrList = res.data.data;
-      });
-  },
+  }
 };
 </script>
+
 
 <template>
   <body>
@@ -120,7 +204,10 @@ export default {
                 </a>
                 <template #overlay>
                   <a-menu>
-                    <a-menu-item v-for="(item, index) in instrList" :key="index" @click="selectId = item.id">
+                    <a-menu-item 
+                      v-for="(item, index) in instrList" 
+                      :key="index" 
+                      @click="selectId = item.id; fetchData()">
                       <span>
                         {{item.id}}号 {{item.location}} {{item.function}}
                         <span v-if="item.status === '故障'" style="color: red">（故障）</span>
@@ -129,7 +216,6 @@ export default {
                   </a-menu>
                 </template>
               </a-dropdown>
-
               <a-checkbox style="margin-right: 10px" v-model:checked="timeSelected"/>
               <a-range-picker v-model:value="time" show-time style="margin-right: 10px" :disabled="!timeSelected"/>
               
@@ -143,23 +229,11 @@ export default {
               <a-spin :spinning="loading" style="margin: auto;"/>
             </a-row>
             <a-row v-if="!loading" style="width: 100%">
-              <a-row v-if="data && data.length !== 0" style="width: 90%;margin: 10px auto;">
-                传感器信息：{{data[0].sensor_info}}
+              <a-row v-if="data && data.length > 0" style="width: 90%; margin: 10px auto;">
+                <div ref="chartContainer" style="width: 100%; height: 400px;"></div>
               </a-row>
               <a-row v-else style="text-align: center; width: 100%; margin: 10vh auto;">
                 暂无数据
-              </a-row>
-              <a-row v-if="data && data.length !== 0" style="width: 100%">
-                <a-descriptions bordered class="data" v-for="(item, index) in data" :key="index">
-                  <a-descriptions-item label="检测时间" :span="2">{{dayjs(item.sensor_data.detect_time).format('YYYY-MM-DD HH:mm:ss')}}</a-descriptions-item>
-                  <a-descriptions-item label="温度(℃)">{{item.sensor_data.temperature}}</a-descriptions-item>
-                  <a-descriptions-item label="电导率(us/cm)">{{item.sensor_data.conductivity}}</a-descriptions-item>
-                  <a-descriptions-item label="湿度(%)">{{item.sensor_data.humidity}}</a-descriptions-item>
-                  <a-descriptions-item label="PH值(pH)">{{item.sensor_data.ph}}</a-descriptions-item>
-                  <a-descriptions-item label="氮指数(mg/kg)">{{item.sensor_data.nitrogen}}</a-descriptions-item>
-                  <a-descriptions-item label="磷指数(mg/kg)">{{item.sensor_data.phosphorus}}</a-descriptions-item>
-                  <a-descriptions-item label="钾指数(mg/kg)">{{item.sensor_data.potassium}}</a-descriptions-item>
-                </a-descriptions>
               </a-row>
             </a-row>
           </div>
