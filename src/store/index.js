@@ -17,7 +17,7 @@ export default createStore({
     setUserInfo (state, res) {
       state.userInfo = res
       localStorage.setItem('token', res.token)
-    }
+    },
   },
   getters: {
     userInfo: state => state.userInfo
