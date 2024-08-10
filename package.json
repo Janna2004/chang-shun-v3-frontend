@@ -12,6 +12,7 @@
     "ant-design-vue": "^4.0.4",
     "axios": "1.6.0",
     "dayjs": "^1.11.10",
+    "echarts": "^5.5.1",
     "fix-webm-duration": "^1.0.5",
     "markdown-it": "^14.0.0",
     "vue": "^3.3.4",
