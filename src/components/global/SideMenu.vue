@@ -18,15 +18,24 @@ export default {
     selectOpt(optionVal) {
       if (this.multiple) {
         if (!Array.isArray(this._selected)) {
-          this._selected = [this._selected]
+          this._selected = [];
         }
-        if (this._selected.includes(optionVal)) {
-          this._selected = this._selected.filter((item) => item !== optionVal)
+        const index = this._selected.indexOf(optionVal);
+        if (index !== -1) {
+          // 如果选项已经在数组中，移除它
+          this._selected.splice(index, 1);
+          // 创建一个新的数组副本以触发响应式更新
+          this._selected = [...this._selected];
+          console.log('remove:', this._selected);
         } else {
-          this._selected.push(optionVal)
+          // 添加新选项
+          this._selected.push(optionVal);
+          // 由于 push 不影响响应性，不需要重新赋值
+          console.log('add:', this._selected);
         }
+        console.log('selected:', this._selected);
       } else {
-        this._selected = optionVal
+        this._selected = optionVal;
       }
     },
   },
@@ -62,12 +71,12 @@ export default {
         stroke="#69A67C"
       />
     </svg>
-    <route-link to="/home">
+    <router-link to="/home">
       <span class="back">
         <img src="@/assets/icons/返回.png" alt="back" />
         返回
       </span>
-    </route-link>
+    </router-link>
   </template>
   </ul>
 </template>

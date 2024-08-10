@@ -2,9 +2,12 @@
 import { DownOutlined } from "@ant-design/icons-vue";
 import dayjs from "dayjs";
 import { message } from "ant-design-vue";
+import PageWithMenu from '../../components/global/PageWithMenu.vue';
+import solidIcon from '@/assets/icons/土壤监测设备 1.png'
+
 export default {
   name: "AirMonitoring",
-  components: { DownOutlined },
+  components: { DownOutlined, PageWithMenu },
   inject: ["$axios"],
   data() {
     return {
@@ -13,8 +16,13 @@ export default {
       data: [],
       loading: false,
       instrList: [],
-      selectedIndex: [], // 存储当前选中的索引
-      menuItems: ['温度', '湿度', '二氧化碳浓度'] // 左侧菜单项
+
+      selectedItems: [],   // 所有被选中的项目
+      menuOpts: [
+        { iconUrl: solidIcon, name: '温度', value: 'temperature' },
+        { iconUrl: solidIcon, name: '湿度', value: 'humidity' },
+        { iconUrl: solidIcon, name: '二氧化碳浓度', value: 'CO2' },
+      ],
     }
   },
   computed: {
@@ -78,147 +86,64 @@ export default {
 </script>
 
 <template>
-  <body>
-    <a-row>
-      <a-col span="4">
-        <ul id="side">
-          <p id="general">Index</p>
-          <li 
-            v-for="(item, index) in menuItems" 
-            :key="index" 
-            @click="handleClick(index)" 
-            :class="{ 'active-item': selectedIndex.includes(index), 'lighten': selectedIndex.includes(index) }"
-          >
-            {{ item }}
-          </li>
-          <p id="general">_______________</p>
-          <router-link to="/home" exact>
-            <li 
-              id="setting" 
-              :class="{ 'active-item': selectedIndex.includes('home'), 'lighten': selectedIndex.includes('home') }" 
-              @click="handleClick('home')"
-            >
-              返回
-            </li>
-          </router-link>
-        </ul>
-      </a-col>
-      <a-col span="20">
-        <div class="main">
-          <div class="top">
-            <div class="button-group">
-              <a-dropdown>
-                <a @click.prevent style="font-size: 1.2em;margin-right: 30px;">
-                  {{ selectId === 0 ? '选择仪器编号' : `已选中${selectId}号检测器` }}
-                  <DownOutlined />
-                </a>
-                <template #overlay>
-                  <a-menu>
-                    <a-menu-item v-for="(item, index) in instrList" :key="index" @click="selectId = item.id">
-                      <span>
-                        {{item.id}}号 {{item.location}} {{item.function}}
-                        <span v-if="item.status === '故障'" style="color: red">（故障）</span>
-                      </span>
-                    </a-menu-item>
-                  </a-menu>
-                </template>
-              </a-dropdown>
+  <PageWithMenu
+    :isHome="false"
+    :options="menuOpts"
+    :multiple="true"
+    :selected="selectedItems"
+  >
+    <template #content>
+      <div class="top">
+        <div class="button-group">
+          <a-dropdown>
+            <a @click.prevent style="font-size: 1.2em;margin-right: 30px;">
+              {{ selectId === 0 ? '选择仪器编号' : `已选中${selectId}号检测器` }}
+              <DownOutlined />
+            </a>
+            <template #overlay>
+              <a-menu>
+                <a-menu-item v-for="(item, index) in instrList" :key="index" @click="selectId = item.id">
+                  <span>
+                    {{item.id}}号 {{item.location}} {{item.function}}
+                    <span v-if="item.status === '故障'" style="color: red">（故障）</span>
+                  </span>
+                </a-menu-item>
+              </a-menu>
+            </template>
+          </a-dropdown>
 
-              <a-range-picker v-model:value="time" show-time style="margin-right: 10px"/>
-              
-              <a-button type="primary" @click="fetchData">查询</a-button>
-            </div>
-          </div>
+          <a-range-picker v-model:value="time" show-time style="margin-right: 10px"/>
           
-          <div class="results">
-            <h3>查询结果</h3>
-            <a-row v-if="loading" style="width: 100%">
-              <a-spin :spinning="loading" style="margin: auto;"/>
-            </a-row>
-            <a-row v-if="!loading" style="width: 100%">
-              <a-row v-if="data && data.length !== 0" style="width: 90%;margin: 10px auto;">
-                传感器信息：{{data[0].sensor_info}}
-              </a-row>
-              <a-row v-else style="text-align: center; width: 100%; margin: 10vh auto;">
-                暂无数据
-              </a-row>
-              <a-row v-if="data && data.length !== 0" style="width: 100%">
-                <a-descriptions bordered class="data" v-for="(item, index) in data" :key="index">
-                  <a-descriptions-item label="检测时间" :span="2">{{dayjs(item.sensor_data.detect_time).format('YYYY-MM-DD HH:mm:ss')}}</a-descriptions-item>
-                  <a-descriptions-item label="温度(℃)">{{item.sensor_data.temperature}}</a-descriptions-item>
-                  <a-descriptions-item label="湿度(%)">{{item.sensor_data.humidity}}</a-descriptions-item>
-                  <a-descriptions-item label="二氧化碳浓度">{{item.sensor_data.co2concentration}}</a-descriptions-item>
-                </a-descriptions>
-              </a-row>
-            </a-row>
-          </div>
+          <a-button type="primary" @click="fetchData">查询</a-button>
         </div>
-      </a-col>
-    </a-row>
-  </body>
+      </div>
+      <div class="results">
+        <h3>查询结果</h3>
+        <a-row v-if="loading" style="width: 100%">
+          <a-spin :spinning="loading" style="margin: auto;"/>
+        </a-row>
+        <a-row v-if="!loading" style="width: 100%">
+          <a-row v-if="data && data.length !== 0" style="width: 90%;margin: 10px auto;">
+            传感器信息：{{data[0].sensor_info}}
+          </a-row>
+          <a-row v-else style="text-align: center; width: 100%; margin: 10vh auto;">
+            暂无数据
+          </a-row>
+          <a-row v-if="data && data.length !== 0" style="width: 100%">
+            <a-descriptions bordered class="data" v-for="(item, index) in data" :key="index">
+              <a-descriptions-item label="检测时间" :span="2">{{dayjs(item.sensor_data.detect_time).format('YYYY-MM-DD HH:mm:ss')}}</a-descriptions-item>
+              <a-descriptions-item label="温度(℃)">{{item.sensor_data.temperature}}</a-descriptions-item>
+              <a-descriptions-item label="湿度(%)">{{item.sensor_data.humidity}}</a-descriptions-item>
+              <a-descriptions-item label="二氧化碳浓度">{{item.sensor_data.co2concentration}}</a-descriptions-item>
+            </a-descriptions>
+          </a-row>
+        </a-row>
+      </div>
+    </template>
+  </PageWithMenu>
 </template>
 
 <style scoped>
-body {
-  background-size: cover;
-  background-color: #c8ecc9;
-  background: url(../css/background-image.png);
-}
-
-ul#side {
-  list-style: none;
-  margin: 2.6vw auto 4.6vw 0px;
-  position: relative;
-  width: 90%;
-  background-color: #c8ecc9;
-  padding-left: 0px;
-  border-top-right-radius: 2vw;
-  border-bottom-right-radius: 2vw;
-  font-family: '等线';
-  border: #69a67c 0.13vw solid;
-}
-
-ul#side li {
-  font-size: 2.13vw;
-  color: black;
-  position: relative;
-  background-color: #b0dab5;
-  border-top-right-radius: 0.66vw;
-  border-bottom-right-radius: 0.66vw;
-  width: 85%;
-  padding-top: 1.3vh;
-  padding-bottom: 1.2vh;
-  padding-left: 1.13vw;
-  margin-bottom: 2.5vh;
-  cursor: pointer;
-}
-
-ul#side li.active-item {
-  background-color: rgb(105, 166, 124);
-  color: white;
-  transform: translateX(18%);
-  transition: transform 0.3s ease;
-  border-top-right-radius: 0vw;
-  border-bottom-right-radius: 0vw;
-  border-top-left-radius: 0.66vw;
-  border-bottom-left-radius: 0.66vw;
-}
-
-#general {
-  color: #69a67c;
-  font-size: 2vw;
-  margin: 1vh auto 1.33vh 0.46vw;
-  padding-top: 1.3vh;
-}
-
-.main {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  padding-top: 2vh;
-}
-
 .top {
   width: 95%;
   display: flex;
@@ -226,6 +151,7 @@ ul#side li.active-item {
   align-items: left;
   background-color: rgb(200, 236, 201);
   margin: 2vw auto;
+  margin-top: 0vw;
   padding: 2vh 2vw;
   border-radius: 2vw;
   font-family: '等线';
