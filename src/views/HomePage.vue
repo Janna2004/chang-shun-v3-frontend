@@ -236,6 +236,7 @@ export default {
 
 <template>
   <PageWithMenu
+    :isHome="true"
     :options="menuOpts"
     :multiple="false"
     v-model:selected="currentModule"
@@ -848,7 +849,7 @@ export default {
 .img {
   width: 95%;
   background-size: 100% 100%;
-  margin: 2.8vw 0% auto 1.5%;
+  margin: 0 0 0 1.5%;
   height: 52vh;
   border-radius: 2vw;
   transition: 2s;

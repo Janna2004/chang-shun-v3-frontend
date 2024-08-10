@@ -106,9 +106,9 @@ router.beforeEach(async (to, from) => {
     return '/login'
   } else {
     // 权限不足跳转主页
-    // return true
+    return true
     // message.warn('权限不足！')
-    return '/home'
+    // return '/home'
   }
 })
 
