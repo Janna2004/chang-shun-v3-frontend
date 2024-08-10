@@ -235,7 +235,11 @@ export default {
 </script>
 
 <template>
-  <PageWithMenu :options="menuOpts" v-model:selected="currentModule">
+  <PageWithMenu
+    :options="menuOpts"
+    :multiple="false"
+    v-model:selected="currentModule"
+  >
     <template #content>
       <template
         v-if="['soil', 'air', 'warning', 'uav'].includes(currentModule)"

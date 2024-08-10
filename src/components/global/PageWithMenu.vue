@@ -4,7 +4,7 @@ import SideMenu from './SideMenu.vue'
 export default {
   name: 'PageWithMenu',
   components: { SideMenu },
-  props: ['options', 'selected'],
+  props: ['options', 'multiple', 'selected'],
   emits: ['update:selected'],
   computed: {
     _selected: {
@@ -22,7 +22,7 @@ export default {
 <template>
   <a-row id="page">
     <a-col span="4">
-      <SideMenu :options="options" v-model:selected="_selected" />
+      <SideMenu :options="options" :multiple="multiple" v-model:selected="_selected" />
     </a-col>
     <a-col span="20">
       <slot name="content"></slot>

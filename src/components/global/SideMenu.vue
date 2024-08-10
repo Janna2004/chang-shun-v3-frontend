@@ -6,6 +6,7 @@ export default {
   computed: {
     _selected: {
       get() {
+        console.log('selected:', this.selected)
         return this.selected
       },
       set(val) {
@@ -16,6 +17,9 @@ export default {
   methods: {
     selectOpt(optionVal) {
       if (this.multiple) {
+        if (!Array.isArray(this._selected)) {
+          this._selected = [this._selected]
+        }
         if (this._selected.includes(optionVal)) {
           this._selected = this._selected.filter((item) => item !== optionVal)
         } else {
@@ -64,6 +68,7 @@ export default {
   cursor: pointer;
   background-color: #b0dab5;
   transition: background-color 0.3s ease;
+  transition: transform 0.3s ease; /* 添加动画效果 */
   border-radius: 0 0.15em 0.15em 0;
   display: flex;
   align-items: center;
@@ -81,7 +86,6 @@ export default {
 #side .active-item {
   background-color: #69a67c; /* 更改背景色 */
   transform: translateX(2em); /* 向右移动 */
-  transition: transform 0.3s ease; /* 添加动画效果 */
   border-radius: 0.5em 0 0 0.5em;
   span {
     color: white;
