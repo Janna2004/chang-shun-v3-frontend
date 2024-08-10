@@ -1,28 +1,27 @@
 <script>
-import MarkdownIt from 'markdown-it'
+import MarkdownIt from "markdown-it";
 
 export default {
-  name: 'MarkdownViewer',
-  data () {
+  name: "MarkdownViewer",
+  data() {
     return {
-      markdown: new MarkdownIt()
-    }
+      markdown: new MarkdownIt(),
+    };
   },
   props: {
     source: {
       type: String,
-      default: ''
-    }
-  }
-}
+      default: "",
+    },
+  },
+};
 </script>
 
 <template>
-  <div v-html="markdown.render(source)"/>
+  <div v-html="markdown.render(source)" />
 </template>
 
 <style scoped>
-
 * {
   font-family: "Microsoft Yahei", Helvetica, arial, sans-serif;
   font-size: 14px;
@@ -41,7 +40,7 @@ export default {
 }
 
 div:deep(h1, h2, h3, h4, h5, h6) {
-  color: #2B3F52;
+  color: #2b3f52;
   padding: 0;
   font-weight: bold;
   -webkit-font-smoothing: antialiased;
@@ -57,13 +56,13 @@ div:deep(h1) {
 
 div:deep(h2) {
   font-size: 24px;
-  border-bottom: 1px solid #DDE4E9;
+  border-bottom: 1px solid #dde4e9;
   margin-top: 50px;
 }
 
 div:deep(h3) {
   font-size: 18px;
   font-weight: bold;
-  color: #3B4F62;
+  color: #3b4f62;
 }
 </style>

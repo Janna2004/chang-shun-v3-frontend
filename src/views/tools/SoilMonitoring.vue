@@ -1,12 +1,12 @@
 <script>
-import { DownOutlined } from '@ant-design/icons-vue'
-import dayjs from 'dayjs'
-import { message } from 'ant-design-vue'
+import { DownOutlined } from "@ant-design/icons-vue";
+import dayjs from "dayjs";
+import { message } from "ant-design-vue";
 export default {
-  name: 'SoilMonitoring',
+  name: "SoilMonitoring",
   components: { DownOutlined },
-  inject: ['$axios'],
-  data () {
+  inject: ["$axios"],
+  data() {
     return {
       selectId: 0,
       time: null,
@@ -20,24 +20,28 @@ export default {
     }
   },
   computed: {
-    convertToJson () {
+    convertToJson() {
       return {
         sensor_id: this.selectId,
-        start_time: this.timeSelected ? dayjs(this.time[0].$d).format('YYYY-MM-DDTHH:mm:ssZ') : undefined,
-        end_time: this.timeSelected ? dayjs(this.time[1].$d).format('YYYY-MM-DDTHH:mm:ssZ') : undefined
-      }
-    }
+        start_time: this.timeSelected
+          ? dayjs(this.time[0].$d).format("YYYY-MM-DDTHH:mm:ssZ")
+          : undefined,
+        end_time: this.timeSelected
+          ? dayjs(this.time[1].$d).format("YYYY-MM-DDTHH:mm:ssZ")
+          : undefined,
+      };
+    },
   },
   methods: {
     dayjs,
-    async fetchData () {
+    async fetchData() {
       if (this.selectId === 0) {
-        message.warn('请选择机器号')
-        return
+        message.warn("请选择机器号");
+        return;
       }
       if (this.timeSelected && this.time === null) {
-        message.warn('请选择时间')
-        return
+        message.warn("请选择时间");
+        return;
       }
       this.loading = true
       this.$axios.get('/soil-sensor/data', {
@@ -64,17 +68,19 @@ export default {
       // this.fetchData(); // 视情况决定是否每次点击都调用 fetchData
     }
   },
-  beforeMount () {
+  beforeMount() {
     // 获取仪器编号
-    this.$axios.get('/sensor/data', {
-      params: {
-        sensor_category: 'soil'
-      }
-    }).then(res => {
-      this.instrList = res.data.data
-    })
-  }
-}
+    this.$axios
+      .get("/sensor/data", {
+        params: {
+          sensor_category: "soil",
+        },
+      })
+      .then((res) => {
+        this.instrList = res.data.data;
+      });
+  },
+};
 </script>
 
 <template>
@@ -162,7 +168,6 @@ export default {
     </a-row>
   </body>
 </template>
-
 
 <style scoped>
 body {

@@ -1,34 +1,41 @@
 <script>
 export default {
-  name: 'LayoutFooter'
-}
+  name: "LayoutFooter",
+};
 </script>
 
 <template>
   <div class="main">
     <div class="info">
       <div class="links">
-        <span style="font-size: 1.5em;color: #10411F">快捷入口</span>
+        <span style="font-size: 1.5em; color: #10411f">快捷入口</span>
         <div class="links-link">
           <a href="https://www.bupt.edu.cn/" target="_blank">北京邮电大学</a>
-          <a href="https://scs.bupt.edu.cn/" target="_blank">北京邮电大学计算机学院（国家示范性软件学院）</a>
+          <a href="https://scs.bupt.edu.cn/" target="_blank"
+            >北京邮电大学计算机学院（国家示范性软件学院）</a
+          >
           <a href="https://www.gzcsx.gov.cn/" target="_blank">长顺县人民政府</a>
         </div>
       </div>
       <div style="margin-left: 100px">
-        <img alt src="@/assets/footimg1.png">
+        <img alt src="@/assets/footimg1.png" />
         <span style="font-size: 1.1em">贵州省 长顺县</span>
       </div>
       <div style="margin-left: 200px">
         <a href="https://www.bupt.edu.cn" target="_blank">
-          <img alt src="@/assets/footlogo.png">
+          <img alt src="@/assets/footlogo.png" />
         </a>
       </div>
     </div>
     <div class="copyright">
       ChangShun @2024 Created by BUPT-SCS-BluePrint
-      <span style="color: #10411F; margin-left: 30px">备案号：</span>
-      <a href="https://beian.miit.gov.cn/#/Integrated/index" style="color: #10411F" target="_blank">京ICP备xxxxxx号</a>
+      <span style="color: #10411f; margin-left: 30px">备案号：</span>
+      <a
+        href="https://beian.miit.gov.cn/#/Integrated/index"
+        style="color: #10411f"
+        target="_blank"
+        >京ICP备xxxxxx号</a
+      >
     </div>
   </div>
 </template>
@@ -36,8 +43,8 @@ export default {
 <style scoped>
 .main {
   width: 100%;
-  background-color: #C8ECC9;
-  color: #10411F;
+  background-color: #c8ecc9;
+  color: #10411f;
   position: relative;
 }
 
@@ -55,7 +62,7 @@ export default {
 
 .links-link a {
   margin-bottom: 0.5vw;
-  color: #10411F;
+  color: #10411f;
   font-size: 1.1rem;
 }
 
@@ -64,7 +71,7 @@ export default {
   text-align: center;
   font-size: 1.1rem;
   position: relative;
-  border-top: solid 1px #10411F;
+  border-top: solid 1px #10411f;
   padding-top: 1vw;
   padding-bottom: 1vw;
 }

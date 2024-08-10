@@ -1,12 +1,12 @@
 <script>
-import { DownOutlined } from '@ant-design/icons-vue'
-import dayjs from 'dayjs'
-import { message } from 'ant-design-vue'
+import { DownOutlined } from "@ant-design/icons-vue";
+import dayjs from "dayjs";
+import { message } from "ant-design-vue";
 export default {
-  name: 'AirMonitoring',
+  name: "AirMonitoring",
   components: { DownOutlined },
-  inject: ['$axios'],
-  data () {
+  inject: ["$axios"],
+  data() {
     return {
       selectId: 0,
       time: null,
@@ -18,24 +18,24 @@ export default {
     }
   },
   computed: {
-    convertToJson () {
+    convertToJson() {
       return {
         sensor_id: this.selectId,
-        start_time: dayjs(this.time[0].$d).format('YYYY-MM-DDTHH:mm:ssZ'),
-        end_time: dayjs(this.time[1].$d).format('YYYY-MM-DDTHH:mm:ssZ')
-      }
-    }
+        start_time: dayjs(this.time[0].$d).format("YYYY-MM-DDTHH:mm:ssZ"),
+        end_time: dayjs(this.time[1].$d).format("YYYY-MM-DDTHH:mm:ssZ"),
+      };
+    },
   },
   methods: {
     dayjs,
-    async fetchData () {
+    async fetchData() {
       if (this.selectId === 0) {
-        message.warn('请选择机器号')
-        return
+        message.warn("请选择机器号");
+        return;
       }
       if (this.time === null) {
-        message.warn('请选择时间线')
-        return
+        message.warn("请选择时间线");
+        return;
       }
       this.loading = true
       this.$axios.get('/air-quality-sensor/data', {
@@ -62,17 +62,19 @@ export default {
       // this.fetchData(); // 视情况决定是否每次点击都调用 fetchData
     }
   },
-  beforeMount () {
+  beforeMount() {
     // 获取仪器编号
-    this.$axios.get('/sensor/data', {
-      params: {
-        sensor_category: 'air-quality'
-      }
-    }).then(res => {
-      this.instrList = res.data.data
-    })
-  }
-}
+    this.$axios
+      .get("/sensor/data", {
+        params: {
+          sensor_category: "air-quality",
+        },
+      })
+      .then((res) => {
+        this.instrList = res.data.data;
+      });
+  },
+};
 </script>
 
 <template>

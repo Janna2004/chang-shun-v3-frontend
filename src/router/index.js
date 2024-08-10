@@ -8,24 +8,24 @@ const userRole = {
   UNREGISTERED: 'admin',
   CUSTOMER: 'customer',
   ADMIN: 'admin',
-  SUPER_ADMIN: 'super-admin'
+  SUPER_ADMIN: 'super-admin',
 }
 
 const routes = [
   // 主功能区
   {
     path: '/',
-    redirect: '/home'
+    redirect: '/home',
   },
   {
     path: '/home',
     name: 'Home',
-    component: () => import('@/views/HomePage.vue')
+    component: () => import('@/views/HomePage.vue'),
   },
   {
     path: '/about',
     name: 'About',
-    component: () => import('@/views/AboutPage.vue')
+    component: () => import('@/views/AboutPage.vue'),
   },
   // 登录
   {
@@ -33,8 +33,8 @@ const routes = [
     name: 'Login',
     component: () => import('@/views/user/LoginPage.vue'),
     meta: {
-      pass: [userRole.UNREGISTERED]
-    }
+      pass: [userRole.UNREGISTERED],
+    },
   },
   // 用户信息
   {
@@ -42,8 +42,8 @@ const routes = [
     name: 'UserInfo',
     component: () => import('@/views/user/UserInfo.vue'),
     meta: {
-      pass: [userRole.CUSTOMER, userRole.ADMIN, userRole.SUPER_ADMIN]
-    }
+      pass: [userRole.CUSTOMER, userRole.ADMIN, userRole.SUPER_ADMIN],
+    },
   },
   // 工具
   {
@@ -51,48 +51,48 @@ const routes = [
     name: 'SoilMonitoring',
     component: () => import('@/views/tools/SoilMonitoring.vue'),
     meta: {
-      pass: [userRole.ADMIN, userRole.SUPER_ADMIN]
-    }
+      pass: [userRole.ADMIN, userRole.SUPER_ADMIN],
+    },
   },
   {
     path: '/air-monitoring',
     name: 'AirMonitoring',
     component: () => import('@/views/tools/AirMonitoring.vue'),
     meta: {
-      pass: [userRole.ADMIN, userRole.SUPER_ADMIN]
-    }
+      pass: [userRole.ADMIN, userRole.SUPER_ADMIN],
+    },
   },
   {
     path: '/alert',
     name: 'Alert',
     component: () => import('@/views/tools/AlertInfo.vue'),
     meta: {
-      pass: [userRole.ADMIN, userRole.SUPER_ADMIN]
-    }
+      pass: [userRole.ADMIN, userRole.SUPER_ADMIN],
+    },
   },
   {
     path: '/UAVControl',
     name: 'UAVControl',
     component: () => import('@/views/tools/UAVControl.vue'),
     meta: {
-      pass: [userRole.ADMIN, userRole.SUPER_ADMIN]
-    }
+      pass: [userRole.ADMIN, userRole.SUPER_ADMIN],
+    },
   },
   {
     path: '/404',
     name: 'NotFound',
-    component: () => import('@/views/NotFound.vue')
+    component: () => import('@/views/NotFound.vue'),
   },
   {
     path: '/:catchAll(.*)',
-    redirect: '/404'
-  }
+    redirect: '/404',
+  },
 ]
 
 const router = createRouter({
   base: '/',
   history: createWebHashHistory(),
-  routes
+  routes,
 })
 
 router.beforeEach(async (to, from) => {
@@ -106,8 +106,8 @@ router.beforeEach(async (to, from) => {
     return '/login'
   } else {
     // 权限不足跳转主页
-    return true;
-    //message.warn('权限不足！')
+    // return true
+    // message.warn('权限不足！')
     return '/home'
   }
 })
