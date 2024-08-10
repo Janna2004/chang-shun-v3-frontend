@@ -14,9 +14,9 @@ export default createStore({
     };
   },
   mutations: {
-    setUserInfo(state, res) {
-      state.userInfo = res;
-      localStorage.setItem("token", res.token);
+    setUserInfo (state, res) {
+      state.userInfo = res
+      localStorage.setItem('token', res.token)
     },
   },
   getters: {

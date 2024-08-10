@@ -42,7 +42,7 @@ export default {
           <router-link :to="{ name: 'Home' }">
             <li id="home">首页</li>
           </router-link>
-          <router-link :to="{ name: 'About' }">
+          <router-link :to="{ name: 'Home' }" @click="$store.commit('changeModule', 'setting')">
             <li id="about">指南</li>
           </router-link>
         </menu>
