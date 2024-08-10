@@ -1,26 +1,26 @@
 <script>
-import MarkdownViewer from '@/components/global/MarkdownViewer.vue'
+import MarkdownViewer from "@/components/global/MarkdownViewer.vue";
 
 export default {
-  name: 'AboutPage',
+  name: "AboutPage",
   components: { MarkdownViewer },
-  data () {
+  data() {
     return {
-      markdownText: ''
-    }
+      markdownText: "",
+    };
   },
-  beforeMount () {
-    this.$axios.get('@/instructions.md').then((res) => {
-      this.markdownText = res.data
-    })
+  beforeMount() {
+    this.$axios.get("@/instructions.md").then((res) => {
+      this.markdownText = res.data;
+    });
   },
-  inject: ['$axios']
-}
+  inject: ["$axios"],
+};
 </script>
 
 <template>
   <div class="main">
-    <MarkdownViewer :source="markdownText"/>
+    <MarkdownViewer :source="markdownText" />
   </div>
 </template>
 

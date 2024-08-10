@@ -9,32 +9,27 @@ dayjs.locale('zh-cn')
 export default {
   name: 'APP',
   components: { LayoutFooter, LayoutHeader },
-  data () {
+  data() {
     return {
       // antd for vue 组件汉化，同步dayjs默认时区汉化，绑定在a-config-provider上
-      locale: zhCN
+      locale: zhCN,
     }
-  }
+  },
 }
 </script>
 
 <template>
-  
-    
-      
-        <LayoutHeader/>
-     
-      
-          <router-view/>
-      
-     
-        <LayoutFooter/>
-  
+  <LayoutHeader />
+  <div id="root">
+    <router-view />
+  </div>
+  <LayoutFooter />
 </template>
 
-
 <style scoped>
-
-
-
+#root {
+  background-size: cover;
+  background-color: #c8ecc9;
+  background: url("@/assets/background-image.png");
+}
 </style>
