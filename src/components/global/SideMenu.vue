@@ -1,7 +1,7 @@
 <script>
 export default {
   name: 'SideMenu',
-  props: ['options', 'multiple', 'selected'],
+  props: ['isHome', 'options', 'multiple', 'selected'],
   emits: ['update:selected'],
   computed: {
     _selected: {
@@ -45,6 +45,7 @@ export default {
       <img :src="option.iconUrl" alt="icon" />
       <span>{{ option.name }}</span>
     </li>
+    <template v-if="!isHome">
     <svg
       width="100%"
       height="36"
@@ -67,6 +68,7 @@ export default {
         返回
       </span>
     </route-link>
+  </template>
   </ul>
 </template>
 

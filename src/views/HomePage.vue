@@ -236,6 +236,7 @@ export default {
 
 <template>
   <PageWithMenu
+    :isHome="true"
     :options="menuOpts"
     :multiple="false"
     v-model:selected="currentModule"
