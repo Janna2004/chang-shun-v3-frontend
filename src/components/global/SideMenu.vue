@@ -139,6 +139,7 @@ svg {
 .back {
   font-size: 1.6vw;
   background-color: #b0dab5;
+  color: #000;
   padding: 0.5em;
   border-radius: 0.5em;
   margin: 0 0 2em 2em;
