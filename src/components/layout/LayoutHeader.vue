@@ -39,12 +39,7 @@ export default {
       </a-col>
       <a-col :span="13">
         <menu>
-          <router-link :to="{ name: 'Home' }">
-            <li id="home">首页</li>
-          </router-link>
-          <router-link :to="{ name: 'Home' }" @click="$store.commit('changeModule', 'setting')">
-            <li id="about">指南</li>
-          </router-link>
+          <!--这里-->
         </menu>
       </a-col>
       <a-col>
