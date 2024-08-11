@@ -189,7 +189,7 @@ export default {
           class="register"
           style="width: 100%; display: flex; flex-direction: row"
         >
-          <a-button type="link" @click="isRegister = false">登录</a-button>
+          <button type="link" @click="isRegister = false">登录</button>
         </div>
       </div>
     </div>

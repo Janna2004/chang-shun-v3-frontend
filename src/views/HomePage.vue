@@ -18,10 +18,10 @@ export default {
   },
   data() {
     return {
-      menuOpts: [
+      menuOpts: [ 
         {
           iconUrl: solidIcon,
-          name: '土壤检测',
+          name: '土壤检测 ',
           value: 'soil',
         },
         {
@@ -352,7 +352,7 @@ export default {
         <div id="content" class="translucent-box">
           <template v-if="currentModule === 'user'">
             <div v-if="isLoggedIn" style="height: 100%; width: 100%">
-              <!-- 插入 userpage 的内容 -->
+              <!-- 插入 userpage 的内容 --> 
               <a-page-header
                 style="
                   border-bottom: 1px solid rgb(235, 237, 240);
@@ -403,9 +403,12 @@ export default {
                     v-if="!isRegister"
                     :style="{ order: 0, width: '100%' }"
                   >
-                    <div style="font-size: 2em; color: #3e3e3e; width: 100%">
-                      用户登录
-                    </div>
+                    <h1 class="login-text1" >
+                      长顺县智慧农业
+                    </h1>
+                    <h1 class="login-text2" >
+                       登录
+                    </h1>
                     <div style="width: 80%; margin-top: 10vh">
                       <a-input
                         v-model:value="login.phone"
@@ -416,7 +419,7 @@ export default {
                         placeholder="输入密码"
                         @keydown.enter="userLogin"
                       />
-                      <a-button
+                      <button
                         type="primary"
                         style="width: 100%"
                         :loading="loginLoading"
@@ -425,17 +428,17 @@ export default {
                           login.phone.length === 0
                         "
                         @click="userLogin"
-                        >登录</a-button
+                        >登录</button
                       >
                     </div>
                     <div
                       class="register"
                       style="width: 80%; display: flex; flex-direction: row"
                     >
-                      <a-button type="link" @click="isRegister = true"
-                        >立即注册</a-button
+                      <button type="link" @click="isRegister = true"
+                        >立即注册</button
                       >
-                      <a-button type="link">忘记密码</a-button>
+                      <button type="link">忘记密码</button>
                     </div>
                   </div>
 
@@ -505,344 +508,6 @@ export default {
       </template>
     </template>
   </PageWithMenu>
-  <a-row v-if="false">
-    <a-col span="4">
-      <ul id="side">
-        <p id="general">General</p>
-        <!-- 点击更改当前模块 -->
-        <li
-          id="soil"
-          @click="changeModule('soil')"
-          :class="{
-            'active-item': currentModule === 'soil',
-            lighten: currentModule === 'soil',
-          }"
-        >
-          土壤检测
-        </li>
-        <li
-          id="air"
-          @click="changeModule('air')"
-          :class="{
-            'active-item': currentModule === 'air',
-            lighten: currentModule === 'air',
-          }"
-        >
-          空气监测
-        </li>
-        <li
-          id="warning"
-          @click="changeModule('warning')"
-          :class="{
-            'active-item': currentModule === 'warning',
-            lighten: currentModule === 'warning',
-          }"
-        >
-          预警信息
-        </li>
-        <li
-          id="uav"
-          @click="changeModule('uav')"
-          :class="{
-            'active-item': currentModule === 'uav',
-            lighten: currentModule === 'uav',
-          }"
-        >
-          无人拍摄
-        </li>
-        <p id="tools">Tools</p>
-        <!--router-link :to="{ name: isLogin ? 'UserInfo' : 'Login' }" exact>
-            <li id="user">用户中心</li>
-          </router-link>
-          <router-link to="/about" exact>
-            <li id="setting">使用指南</li>
-          </router-link-->
-        <li
-          id="user"
-          @click="changeModule('user')"
-          :class="{
-            'active-item': currentModule === 'user',
-            lighten: currentModule === 'user',
-          }"
-        >
-          用户中心
-        </li>
-        <li
-          id="setting"
-          @click="changeModule('setting')"
-          :class="{
-            'active-item': currentModule === 'setting',
-            lighten: currentModule === 'setting',
-          }"
-        >
-          使用指南
-        </li>
-      </ul>
-    </a-col>
-    <a-col span="20">
-      <template
-        v-if="['soil', 'air', 'warning', 'uav'].includes(currentModule)"
-      >
-        <div
-          class="img"
-          :style="{ backgroundImage: `url(${bgImg.images[bgImg.index]})` }"
-        >
-          <div class="changshun" />
-        </div>
-        <a-row>
-          <a-col span="14">
-            <div id="left">
-              <template v-if="currentModule === 'soil'">
-                <t-left>
-                  <h1 class="topic">土壤监测</h1>
-                  <p class="text">
-                    土壤监测是指对土壤的物理、化学、生物等特性进行定期检测和分析的过程。
-                  </p>
-                  <div id="more">
-                    <p>了解更多</p>
-                  </div>
-                </t-left>
-              </template>
-              <template v-else-if="currentModule === 'air'">
-                <t-left>
-                  <h1 class="topic">空气监测</h1>
-                  <p class="text">
-                    空气监测是对大气中空气质量参数进行定期检测和分析的过程，是环境保护工作中至关重要的一个方面。
-                  </p>
-                  <div id="more">
-                    <p>了解更多</p>
-                  </div>
-                </t-left>
-              </template>
-              <template v-else-if="currentModule === 'warning'">
-                <t-left>
-                  <h1 class="topic">预警信息</h1>
-                  <p class="text">
-                    预警信息指的是对农作物、林木、花卉等植物病虫害状况进行定期监测和分析所得到的信息。
-                  </p>
-                  <div id="more">
-                    <p>了解更多</p>
-                  </div>
-                </t-left>
-              </template>
-              <template v-else-if="currentModule === 'uav'">
-                <t-left>
-                  <h1 class="topic">无人拍摄</h1>
-                  <p class="text">
-                    无人拍摄指的是利用无人机进行空中观察和图像记录，以便进行实时的农作物监测、农业资源管理和病虫害防治。
-                  </p>
-                  <div id="more">
-                    <p>了解更多</p>
-                  </div>
-                </t-left>
-              </template>
-            </div>
-          </a-col>
-          <a-col span="10">
-            <div id="right">
-              <template v-if="currentModule === 'soil'">
-                <t-right>
-                  <h1 class="topic">土壤<br />数据监控</h1>
-                  <router-link to="/soil-monitoring" id="tool" exact>
-                    <div id="enter">
-                      <p>点击进入</p>
-                    </div>
-                  </router-link>
-                </t-right>
-              </template>
-              <template v-else-if="currentModule === 'air'">
-                <t-right>
-                  <h1 class="topic">空气<br />数据监控</h1>
-                  <router-link to="/air-monitoring" id="tool" exact>
-                    <div id="enter">
-                      <p>点击进入</p>
-                    </div>
-                  </router-link>
-                </t-right>
-              </template>
-              <template v-else-if="currentModule === 'warning'">
-                <t-right>
-                  <h1 class="topic">预警<br />信息监控</h1>
-                  <router-link to="/alert" id="tool" exact>
-                    <div id="enter">
-                      <p>点击进入</p>
-                    </div>
-                  </router-link>
-                </t-right>
-              </template>
-              <template v-else-if="currentModule === 'uav'">
-                <t-right>
-                  <h1 class="topic">无人<br />拍摄监控</h1>
-                  <router-link to="/UAVControl" id="tool" exact>
-                    <div id="enter">
-                      <p>点击进入</p>
-                    </div>
-                  </router-link>
-                </t-right>
-              </template>
-            </div>
-          </a-col>
-        </a-row>
-      </template>
-      <template
-        v-else-if="currentModule === 'user' || currentModule === 'setting'"
-      >
-        <div id="content" class="translucent-box">
-          <template v-if="currentModule === 'user'">
-            <div v-if="isLoggedIn" style="height: 100%; width: 100%">
-              <!-- 插入 userpage 的内容 -->
-              <a-page-header
-                style="
-                  border-bottom: 1px solid rgb(235, 237, 240);
-                  padding: 10px 20px;
-                  font-size: 1.1em;
-                "
-                title="用户信息"
-                @back="handleBack"
-              />
-              <div style="margin: 20px 50px; display: flex">
-                <a-descriptions :column="1" style="width: 20em">
-                  <a-descriptions-item label="用户名">{{
-                    user.username
-                  }}</a-descriptions-item>
-                  <a-descriptions-item label="UID">{{
-                    user.uid
-                  }}</a-descriptions-item>
-                  <a-descriptions-item label="权限">{{
-                    userRole
-                  }}</a-descriptions-item>
-                </a-descriptions>
-                <div>
-                  <a-button @click="logout">登出</a-button>
-                  <a-row
-                    v-if="user.role === 'super-admin'"
-                    style="margin-top: 40px"
-                  >
-                    <a-input-group compact>
-                      <a-input v-model:value="phone" style="width: 120px" />
-                      <a-button type="primary" @click="addAdmin"
-                        >添加管理员</a-button
-                      >
-                    </a-input-group>
-                  </a-row>
-                </div>
-              </div>
-            </div>
-            <div v-else style="height: 100%; width: 100%">
-              <!-- 插入 loginpage 的内容 -->
-              <div style="height: 100%; width: 100%">
-                <div class="user">
-                  <div class="ad" :style="{ order: isRegister ? 0 : 1 }">
-                    海报/宣传图
-                  </div>
-                  <!--登陆界面-->
-                  <div
-                    class="info"
-                    v-if="!isRegister"
-                    :style="{ order: 0, width: '100%' }"
-                  >
-                    <div style="font-size: 2em; color: #3e3e3e; width: 100%">
-                      用户登录
-                    </div>
-                    <div style="width: 80%; margin-top: 10vh">
-                      <a-input
-                        v-model:value="login.phone"
-                        placeholder="输入手机号"
-                      />
-                      <a-input-password
-                        v-model:value="login.password"
-                        placeholder="输入密码"
-                        @keydown.enter="userLogin"
-                      />
-                      <a-button
-                        type="primary"
-                        style="width: 100%"
-                        :loading="loginLoading"
-                        :disabled="
-                          login.password.length === 0 ||
-                          login.phone.length === 0
-                        "
-                        @click="userLogin"
-                        >登录</a-button
-                      >
-                    </div>
-                    <div
-                      class="register"
-                      style="width: 80%; display: flex; flex-direction: row"
-                    >
-                      <a-button type="link" @click="isRegister = true"
-                        >立即注册</a-button
-                      >
-                      <a-button type="link">忘记密码</a-button>
-                    </div>
-                  </div>
-
-                  <!--注册页面-->
-                  <div v-if="isRegister" :style="{ order: 1, width: '100%' }">
-                    <div style="font-size: 2em; color: #3e3e3e; width: 100%">
-                      注册
-                    </div>
-                    <div style="width: 80%; margin-top: 30px">
-                      <a-input
-                        v-model:value="register.username"
-                        placeholder="输入用户名"
-                      />
-                      <a-input-search
-                        v-model:value="register.phone"
-                        placeholder="输入手机号"
-                        :enter-button="sendCodeInfo"
-                        @search="sendCode"
-                        :disabled="sendCodeInfo !== '发送验证码'"
-                      />
-                      <a-input-password
-                        v-model:value="register.password1"
-                        placeholder="输入密码"
-                      />
-                      <a-input-password
-                        v-model:value="register.password2"
-                        placeholder="重复密码"
-                        @keydown.enter="userRegister"
-                      />
-                      <div class="inline-flex">
-                        <a-input
-                          v-model:value="register.code"
-                          placeholder="输入验证码"
-                        />
-                        <p>已有帐号？</p>
-                        <a-button type="link" @click="isRegister = false"
-                          >登录</a-button
-                        >
-                      </div>
-                      <a-button
-                        type="primary"
-                        style="width: 100%"
-                        :loading="registerLoading"
-                        :disabled="
-                          register.password1.length === 0 ||
-                          register.username.length === 0 ||
-                          register.phone === 0 ||
-                          register.password2.length === 0
-                        "
-                        @click="userRegister"
-                      >
-                        注册
-                      </a-button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </template>
-          <!--用户指南-->
-          <template v-else-if="currentModule === 'setting'">
-            <div class="setting">
-              <MarkdownViewer :source="markdownText" />
-            </div>
-          </template>
-        </div>
-      </template>
-    </a-col>
-  </a-row>
 </template>
 
 <style scoped>
@@ -980,10 +645,32 @@ t-right div p {
   width: 45%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content:left;
   align-items: center;
 }
 
+/* 登录标题文字样式 */
+.login-text1{
+  align-items:normal;
+  font-size: 3em; 
+  color: #fcd85e; 
+  width: 100%;
+  font-family:"Microsoft Yahei", "微软雅黑", Arial, sans-serif;
+  font-weight: bolder;
+  position: relative;
+  left: 5vw;
+  padding-top: 10vh;
+}
+.login-text2{
+  align-items:normal;
+  font-size: 2.5em; 
+  color: #ffffff; 
+  width: 100%;
+  font-family:"Microsoft Yahei", "微软雅黑", Arial, sans-serif;
+  font-weight:500;
+  position: relative;
+  left: 5vw;
+}
 .info div input,
 .info:deep(.ant-input-search),
 .info:deep(.ant-input-password) {
