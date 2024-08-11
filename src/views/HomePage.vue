@@ -260,9 +260,6 @@ export default {
                   <p class="text">
                     土壤监测是指对土壤的物理、化学、生物等特性进行定期检测和分析的过程。
                   </p>
-                  <div id="more">
-                    <p>了解更多</p>
-                  </div>
                 </t-left>
               </template>
               <template v-else-if="currentModule === 'air'">
@@ -271,9 +268,6 @@ export default {
                   <p class="text">
                     空气监测是对大气中空气质量参数进行定期检测和分析的过程，是环境保护工作中至关重要的一个方面。
                   </p>
-                  <div id="more">
-                    <p>了解更多</p>
-                  </div>
                 </t-left>
               </template>
               <template v-else-if="currentModule === 'warning'">
@@ -282,9 +276,6 @@ export default {
                   <p class="text">
                     预警信息指的是对农作物、林木、花卉等植物病虫害状况进行定期监测和分析所得到的信息。
                   </p>
-                  <div id="more">
-                    <p>了解更多</p>
-                  </div>
                 </t-left>
               </template>
               <template v-else-if="currentModule === 'uav'">
@@ -293,9 +284,6 @@ export default {
                   <p class="text">
                     无人拍摄指的是利用无人机进行空中观察和图像记录，以便进行实时的农作物监测、农业资源管理和病虫害防治。
                   </p>
-                  <div id="more">
-                    <p>了解更多</p>
-                  </div>
                 </t-left>
               </template>
             </div>
@@ -754,7 +742,7 @@ button.down {
   overflow-y: auto; /* 启用垂直滚动 */
   padding-right: 2cqb; /* 滚动时右侧留出一些空隙 */
   border: 1px solid #98ba7c; /* 添加边框以区分滚动区域 */
-  background-color: #f9f9f9; /* 滚动区域背景色 */
+  background-color: #f9f9f9f9; /* 滚动区域背景色 */
   border-radius: 1.34vw;
 }
 </style>
