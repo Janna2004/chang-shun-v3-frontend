@@ -1,22 +1,22 @@
 <script>
-import SideMenu from './SideMenu.vue'
+import SideMenu from "./SideMenu.vue";
 
 export default {
-  name: 'PageWithMenu',
+  name: "PageWithMenu",
   components: { SideMenu },
-  props: ['isHome', 'options', 'multiple', 'selected'],
-  emits: ['update:selected'],
+  props: ["isHome", "options", "multiple", "selected"],
+  emits: ["update:selected"],
   computed: {
     _selected: {
       get() {
-        return this.selected
+        return this.selected;
       },
       set(val) {
-        this.$emit('update:selected', val)
+        this.$emit("update:selected", val);
       },
     },
   },
-}
+};
 </script>
 
 <template>

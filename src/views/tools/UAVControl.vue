@@ -4,8 +4,8 @@ import { VideoCameraOutlined } from "@ant-design/icons-vue";
 import dayjs from "dayjs";
 import fixWebmDuration from "fix-webm-duration";
 import { notification } from "ant-design-vue";
-import PageWithMenu from '../../components/global/PageWithMenu.vue';
-import solidIcon from '@/assets/icons/土壤监测设备 1.png'
+import PageWithMenu from "../../components/global/PageWithMenu.vue";
+import solidIcon from "@/assets/icons/土壤监测设备 1.png";
 
 const supported = MediaRecorder.isTypeSupported("video/webm;codecs=vp9");
 
@@ -15,14 +15,26 @@ export default {
   data() {
     return {
       menuOpts: [
-          { iconUrl: solidIcon, name: '水平校准', value: 'levelCalibration' },
-          { iconUrl: solidIcon, name: '磁力计较准', value: 'magnetometerCalibration' },
-          { iconUrl: solidIcon, name: '6面加速度校准', value: 'accelerometerCalibration' },
-          { iconUrl: solidIcon, name: '陀螺仪校准', value: 'gyroscopeCalibration' },
-          { iconUrl: solidIcon, name: '飞控解锁', value: 'unlock' },
-          { iconUrl: solidIcon, name: '飞控上锁', value: 'lock' }
-        ],
-      currentModule: 'temperature',
+        { iconUrl: solidIcon, name: "水平校准", value: "levelCalibration" },
+        {
+          iconUrl: solidIcon,
+          name: "磁力计较准",
+          value: "magnetometerCalibration",
+        },
+        {
+          iconUrl: solidIcon,
+          name: "6面加速度校准",
+          value: "accelerometerCalibration",
+        },
+        {
+          iconUrl: solidIcon,
+          name: "陀螺仪校准",
+          value: "gyroscopeCalibration",
+        },
+        { iconUrl: solidIcon, name: "飞控解锁", value: "unlock" },
+        { iconUrl: solidIcon, name: "飞控上锁", value: "lock" },
+      ],
+      currentModule: "temperature",
 
       supported,
       // 无人机服务器地址
@@ -55,7 +67,6 @@ export default {
         distance: 0,
         velocity: 0,
         dirAngle: 0,
-
       },
     };
   },
@@ -268,7 +279,7 @@ export default {
 </script>
 
 <template>
-    <PageWithMenu
+  <PageWithMenu
     :isHome="false"
     :options="menuOpts"
     :multiple="false"
@@ -276,72 +287,63 @@ export default {
   >
     <template #content>
       <div class="main">
-          <div class="top">
-            <h3>无人机控制</h3>
-            <div class="button-group">
-              <p>飞控模式</p>
-              <div class="custom-button-group">
-                <button class="custom-button" @click="changeMode(0)">
-                  Manual
-                </button>
-                <button class="custom-button" @click="changeMode(1)">
-                  Altitude
-                </button>
-                <button class="custom-button" @click="changeMode(2)">
-                  Position
-                </button>
-                <button class="custom-button" @click="changeMode(3)">
-                  Auto
-                </button>
-              </div>
-              <p>姿态控制</p>
-              <div class="custom-button-group">
-                <button
-                  class="custom-button"
-                  @click="sendRequest('returnHome')"
-                >
-                  一键返航
-                </button>
-                <button class="custom-button" @click="onekeyTakeoff()">
-                  一键起飞
-                </button>
-                <button class="custom-button" @click="sendRequest('land')">
-                  一键降落
-                </button>
-                <button class="custom-button" @click="horizontalMove()">
-                  平移
-                </button>
-              </div>
+        <div class="top">
+          <h3>无人机控制</h3>
+          <div class="button-group">
+            <p>飞控模式</p>
+            <div class="custom-button-group">
+              <button class="custom-button" @click="changeMode(0)">
+                Manual
+              </button>
+              <button class="custom-button" @click="changeMode(1)">
+                Altitude
+              </button>
+              <button class="custom-button" @click="changeMode(2)">
+                Position
+              </button>
+              <button class="custom-button" @click="changeMode(3)">Auto</button>
+            </div>
+            <p>姿态控制</p>
+            <div class="custom-button-group">
+              <button class="custom-button" @click="sendRequest('returnHome')">
+                一键返航
+              </button>
+              <button class="custom-button" @click="onekeyTakeoff()">
+                一键起飞
+              </button>
+              <button class="custom-button" @click="sendRequest('land')">
+                一键降落
+              </button>
+              <button class="custom-button" @click="horizontalMove()">
+                平移
+              </button>
             </div>
           </div>
-          <div class="video">
-            <div class="inner" v-if="recording">
-              <a-row><VideoCameraOutlined class="recording" />录制中</a-row>
-              <a-row style="margin-top: 1vh">当前帧率：10FPS</a-row>
-              <a-row style="margin-top: 1vh">录制时长：{{ duration }}</a-row>
-            </div>
-            <canvas class="video-feed" id="canvas-feed" />
-            <div class="controller">
-              <div
-                style="color: green"
-                @click="startRecord"
-                v-if="!recording && supported"
-              >
-                开始录制
-              </div>
-              <div style="color: red" v-if="!supported">不支持录制</div>
-              <div style="color: red" @click="endRecord" v-if="recording">
-                停止录制
-              </div>
-              <div style="color: #2b3f52" @click="getFrame">截取当前帧</div>
-            </div>
+        </div>
+        <div class="video">
+          <div class="inner" v-if="recording">
+            <a-row><VideoCameraOutlined class="recording" />录制中</a-row>
+            <a-row style="margin-top: 1vh">当前帧率：10FPS</a-row>
+            <a-row style="margin-top: 1vh">录制时长：{{ duration }}</a-row>
           </div>
+          <canvas class="video-feed" id="canvas-feed" />
+          <div class="controller">
+            <div
+              style="color: green"
+              @click="startRecord"
+              v-if="!recording && supported"
+            >
+              开始录制
+            </div>
+            <div style="color: red" v-if="!supported">不支持录制</div>
+            <div style="color: red" @click="endRecord" v-if="recording">
+              停止录制
+            </div>
+            <div style="color: #2b3f52" @click="getFrame">截取当前帧</div>
+          </div>
+        </div>
       </div>
-      <a-modal
-        title="参数输入"
-        v-model:open="input.input"
-        @ok="sendRequest()"
-      >
+      <a-modal title="参数输入" v-model:open="input.input" @ok="sendRequest()">
         <p>{{ input.notes }}</p>
         <a-input
           v-for="(item, name, index) in input.waiting"

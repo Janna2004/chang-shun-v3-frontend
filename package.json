@@ -6,7 +6,8 @@
     "dev": "vite --host",
     "build": "vite build",
     "preview": "vite preview",
-    "prettier:fix": "prettier --write ."
+    "lint": "eslint --ext .js,.vue src",
+    "prettier": "prettier --write \"src/**/*.{vue,js}\""
   },
   "dependencies": {
     "@ant-design/icons-vue": "^7.0.1",

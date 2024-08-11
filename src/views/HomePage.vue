@@ -1,237 +1,237 @@
 <script>
-import { DotChartOutlined } from '@ant-design/icons-vue'
-import { message } from 'ant-design-vue'
-import MarkdownViewer from '@/components/global/MarkdownViewer.vue'
-import PageWithMenu from '../components/global/PageWithMenu.vue'
-import solidIcon from '@/assets/icons/土壤监测设备 1.png'
-import airIcon from '@/assets/icons/摸清空气质量现状 1.png'
-import warningIcon from '@/assets/icons/预警 1.png'
-import uavIcon from '@/assets/icons/照相 1.png'
-import userIcon from '@/assets/icons/个人中心 1.png'
-import settingIcon from '@/assets/icons/setting1.png'
+import { DotChartOutlined } from "@ant-design/icons-vue";
+import { message } from "ant-design-vue";
+import MarkdownViewer from "@/components/global/MarkdownViewer.vue";
+import PageWithMenu from "../components/global/PageWithMenu.vue";
+import solidIcon from "@/assets/icons/土壤监测设备 1.png";
+import airIcon from "@/assets/icons/摸清空气质量现状 1.png";
+import warningIcon from "@/assets/icons/预警 1.png";
+import uavIcon from "@/assets/icons/照相 1.png";
+import userIcon from "@/assets/icons/个人中心 1.png";
+import settingIcon from "@/assets/icons/setting1.png";
 
 export default {
-  name: 'HomePage',
+  name: "HomePage",
   components: {
     MarkdownViewer,
     PageWithMenu,
   },
   data() {
     return {
-      menuOpts: [ 
+      menuOpts: [
         {
           iconUrl: solidIcon,
-          name: '土壤检测 ',
-          value: 'soil',
+          name: "土壤检测 ",
+          value: "soil",
         },
         {
           iconUrl: airIcon,
-          name: '空气监测',
-          value: 'air',
+          name: "空气监测",
+          value: "air",
         },
         {
           iconUrl: warningIcon,
-          name: '预警信息',
-          value: 'warning',
+          name: "预警信息",
+          value: "warning",
         },
         {
           iconUrl: uavIcon,
-          name: '无人拍摄',
-          value: 'uav',
+          name: "无人拍摄",
+          value: "uav",
         },
         {
           iconUrl: userIcon,
-          name: '用户中心',
-          value: 'user',
+          name: "用户中心",
+          value: "user",
         },
         {
           iconUrl: settingIcon,
-          name: '使用指南',
-          value: 'setting',
+          name: "使用指南",
+          value: "setting",
         },
       ],
-      currentModule: 'soil', // 用于跟踪当前显示的模块
+      currentModule: "soil", // 用于跟踪当前显示的模块
       // 登录注册相关
       login: {
-        phone: '',
-        password: '',
+        phone: "",
+        password: "",
       },
       register: {
-        username: '',
-        phone: '',
-        code: '',
-        password1: '',
-        password2: '',
+        username: "",
+        phone: "",
+        code: "",
+        password1: "",
+        password2: "",
       },
       loginLoading: false,
       registerLoading: false,
       isRegister: false,
-      sendCodeInfo: '发送验证码',
+      sendCodeInfo: "发送验证码",
       // 背景图片轮播
       bgImg: {
         index: 0,
         images: [
-          'https://www.gzcsx.gov.cn/syqt/jxcsbjqh/202310/W020231017426763808586_ORIGIN.png',
-          'https://www.gzcsx.gov.cn/syqt/jxcsbjqh/202310/W020231017427000118087_ORIGIN.png',
+          "https://www.gzcsx.gov.cn/syqt/jxcsbjqh/202310/W020231017426763808586_ORIGIN.png",
+          "https://www.gzcsx.gov.cn/syqt/jxcsbjqh/202310/W020231017427000118087_ORIGIN.png",
         ],
       },
       // 侧边栏模块
       tools: [
         {
           icon: DotChartOutlined,
-          name: '土壤数据监控',
-          path: '/soil-monitoring',
+          name: "土壤数据监控",
+          path: "/soil-monitoring",
         },
       ],
       // 用户指南
-      markdownText: '',
+      markdownText: "",
       isLoggedIn: false,
-    }
+    };
   },
   beforeMount() {
-    if (this.currentModule === 'setting') {
-      this.loadMarkdown()
+    if (this.currentModule === "setting") {
+      this.loadMarkdown();
     }
   },
   watch: {
     currentModule(newValue) {
-      if (newValue === 'setting') {
-        this.loadMarkdown()
+      if (newValue === "setting") {
+        this.loadMarkdown();
       }
     },
   },
   computed: {
     user() {
-      return this.$store.getters.userInfo
+      return this.$store.getters.userInfo;
     },
     userRole() {
       const userRole = {
-        'super-admin': '超级管理员',
-        admin: '管理员',
-        customer: '游客',
-      }
-      return userRole[this.user.role]
+        "super-admin": "超级管理员",
+        admin: "管理员",
+        customer: "游客",
+      };
+      return userRole[this.user.role];
     },
   },
   methods: {
     // 登录注册相关
     async userRegister() {
       if (this.register.password1 !== this.register.password2) {
-        message.error('两次密码不一致！')
-        return
+        message.error("两次密码不一致！");
+        return;
       }
-      this.registerLoading = true
+      this.registerLoading = true;
       await this.$store
-        .dispatch('register', {
+        .dispatch("register", {
           username: this.register.username,
           password: this.register.password1,
           phone: this.register.phone,
           code: this.register.code,
         })
         .then(() => {
-          message.info('注册成功！')
-          this.$router.push({ name: 'Home' })
+          message.info("注册成功！");
+          this.$router.push({ name: "Home" });
         })
         .catch((err) => {
-          message.error('注册失败！')
-          console.log(err)
+          message.error("注册失败！");
+          console.log(err);
         })
         .finally(() => {
-          this.registerLoading = false
-        })
+          this.registerLoading = false;
+        });
     },
     async userLogin() {
-      this.loginLoading = true
+      this.loginLoading = true;
       this.$store
-        .dispatch('login', this.login)
+        .dispatch("login", this.login)
         .then(() => {
-          message.info('登录成功！')
-          this.isLoggedIn = true
-          this.changeModule('soil')
+          message.info("登录成功！");
+          this.isLoggedIn = true;
+          this.changeModule("soil");
         })
         .catch((err) => {
-          if (err.status === 401) message.error('账号不存在或密码错误！')
-          else message.error('登录失败！')
-          console.log(err)
+          if (err.status === 401) message.error("账号不存在或密码错误！");
+          else message.error("登录失败！");
+          console.log(err);
         })
         .finally(() => {
-          this.loginLoading = false
-        })
+          this.loginLoading = false;
+        });
     },
     async sendCode() {
       if (
         this.register.phone.length !== 11 ||
-        !this.register.phone.startsWith('1')
+        !this.register.phone.startsWith("1")
       ) {
-        message.error('手机号格式不正确！')
-        return
+        message.error("手机号格式不正确！");
+        return;
       }
       await this.$axios
-        .post('/user/phone-verify', {
+        .post("/user/phone-verify", {
           phone: this.register.phone,
         })
         .then(() => {
-          message.info('验证码发送成功！')
+          message.info("验证码发送成功！");
         })
         .catch((err) => {
-          message.error('验证码发送失败！')
-          console.log(err)
+          message.error("验证码发送失败！");
+          console.log(err);
         })
         .finally(() => {
           // 倒计时60秒
-          let time = 60
-          this.sendCodeInfo = `${time}秒后重发`
+          let time = 60;
+          this.sendCodeInfo = `${time}秒后重发`;
           const timer = setInterval(() => {
             if (time === 0) {
-              clearInterval(timer)
-              this.sendCodeInfo = '发送验证码'
+              clearInterval(timer);
+              this.sendCodeInfo = "发送验证码";
             } else {
-              this.sendCodeInfo = `${time}秒后重发`
-              time--
+              this.sendCodeInfo = `${time}秒后重发`;
+              time--;
             }
-          }, 1000)
-        })
+          }, 1000);
+        });
     },
     // 用户中心相关
     logout() {
-      this.$store.dispatch('logout').then(() => {
-        message.info('登出成功！')
-        this.isLoggedIn = false
-        this.changeModule('soil')
-      })
+      this.$store.dispatch("logout").then(() => {
+        message.info("登出成功！");
+        this.isLoggedIn = false;
+        this.changeModule("soil");
+      });
     },
     addAdmin() {
       this.$axios
-        .post('/user/add-admin', {
+        .post("/user/add-admin", {
           phone: this.phone,
         })
         .then((res) => {
-          message.info('添加成功！')
-          this.phone = ''
+          message.info("添加成功！");
+          this.phone = "";
         })
         .catch((err) => {
-          message.error('添加失败！')
-          console.log(err)
-        })
+          message.error("添加失败！");
+          console.log(err);
+        });
     },
     // 用户指南相关
     loadMarkdown() {
-      this.$axios.get('@/instructions.md').then((res) => {
-        this.markdownText = res.data
-      })
+      this.$axios.get("@/instructions.md").then((res) => {
+        this.markdownText = res.data;
+      });
     },
     handleBack() {
-      this.changeModule('soil')
+      this.changeModule("soil");
     },
   },
-  inject: ['$axios'],
+  inject: ["$axios"],
   mounted() {
     // 主页背景图片轮播
     setInterval(() => {
-      this.bgImg.index = (this.bgImg.index + 1) % this.bgImg.images.length
-    }, 6000)
+      this.bgImg.index = (this.bgImg.index + 1) % this.bgImg.images.length;
+    }, 6000);
   },
-}
+};
 </script>
 
 <template>
@@ -352,7 +352,7 @@ export default {
         <div id="content" class="translucent-box">
           <template v-if="currentModule === 'user'">
             <div v-if="isLoggedIn" style="height: 100%; width: 100%">
-              <!-- 插入 userpage 的内容 --> 
+              <!-- 插入 userpage 的内容 -->
               <a-page-header
                 style="
                   border-bottom: 1px solid rgb(235, 237, 240);
@@ -395,55 +395,59 @@ export default {
               <div style="height: 100%; width: 100%">
                 <div class="user">
                   <div class="ad" :style="{ order: isRegister ? 0 : 1 }">
-                    
-                    <img class="pic" src="https://www.gzcsx.gov.cn/syqt/jxcsbjqh/202310/W020231017426763808586_ORIGIN.png">
+                    <img
+                      class="pic"
+                      src="https://www.gzcsx.gov.cn/syqt/jxcsbjqh/202310/W020231017426763808586_ORIGIN.png"
+                    />
                   </div>
-                 
+
                   <!--登陆界面-->
                   <div
                     class="info"
                     v-if="!isRegister"
                     :style="{ order: 0, width: '100%' }"
                   >
-                    <h1 class="login-text1" >
-                      长顺县智慧农业
-                    </h1>
-                    <h1 class="login-text2" >
-                       登录
-                    </h1>
-                    
+                    <h1 class="login-text1">长顺县智慧农业</h1>
+                    <h1 class="login-text2">登录</h1>
+
                     <div class="input">
-                      <div style=" margin-top: 3vh">
+                      <div style="margin-top: 3vh">
                         <p>手机号码</p>
-                        <input class="phone-num"
+                        <input
+                          class="phone-num"
                           v-model="login.phone"
                           placeholder="输入手机号"
                         />
-                        <p>密码</p>                      
-                        <input class="password"
+                        <p>密码</p>
+                        <input
+                          class="password"
                           v-model="login.password"
                           placeholder="输入密码"
                           @keydown.enter="userLogin"
                         />
-                        <button class="login"
-                          
-                          
+                        <button
+                          class="login"
                           :loading="loginLoading"
                           :disabled="
                             login.password.length === 0 ||
                             login.phone.length === 0
                           "
                           @click="userLogin"
-                          >登 录 -></button
                         >
+                          登 录 ->
+                        </button>
                       </div>
                       <div
                         class="register"
                         style="width: 80%; display: flex; flex-direction: row"
                       >
-                        <button class="down" type="link" @click="isRegister = true"
-                          >立即注册</button
+                        <button
+                          class="down"
+                          type="link"
+                          @click="isRegister = true"
                         >
+                          立即注册
+                        </button>
                         <button class="down" type="link">忘记密码</button>
                       </div>
                     </div>
@@ -451,13 +455,9 @@ export default {
 
                   <!--注册页面-->
                   <div v-if="isRegister" :style="{ order: 1, width: '100%' }">
-                    <h1 class="login-text1" >
-                      长顺县智慧农业
-                    </h1>
-                    <h1 class="login-text2" >
-                       注册
-                    </h1>
-  
+                    <h1 class="login-text1">长顺县智慧农业</h1>
+                    <h1 class="login-text2">注册</h1>
+
                     <div class="input">
                       <input
                         v-model="register.username"
@@ -480,20 +480,20 @@ export default {
                         placeholder="重复密码"
                         @keydown.enter="userRegister"
                       />
-                      <input
-                          v-model="register.code"
-                          placeholder="输入验证码"
-                      />
+                      <input v-model="register.code" placeholder="输入验证码" />
                       <div class="inline-flex">
-                        
                         <p>已有帐号？</p>
-                        <button  class="down" type="link" @click="isRegister = false"
-                          >去登录</button
+                        <button
+                          class="down"
+                          type="link"
+                          @click="isRegister = false"
                         >
+                          去登录
+                        </button>
                       </div>
-                      <button class="login"
+                      <button
+                        class="login"
                         type="primary"
-                        
                         :loading="registerLoading"
                         :disabled="
                           register.password1.length === 0 ||
@@ -535,7 +535,7 @@ export default {
 }
 
 .changshun {
-  background-image: url('@/assets/image.png');
+  background-image: url("@/assets/image.png");
   position: relative;
   width: 7vw;
   height: 15vw;
@@ -546,7 +546,7 @@ export default {
 
 #left {
   background-color: rgba(105, 166, 124, 0.9);
-  background-image: url('css/soiltest-icon.png');
+  background-image: url("css/soiltest-icon.png");
   background-position: 98% 40%;
   background-size: 33%;
   background-repeat: no-repeat;
@@ -564,13 +564,13 @@ t-left {
 }
 t-left h1 {
   font-size: 2.67vw;
-  font-family: '等线';
+  font-family: "等线";
   color: white;
 }
 t-left p {
   margin-top: -1vh;
   font-size: 1.13vw;
-  font-family: '等线';
+  font-family: "等线";
   color: white;
   width: 50%;
 }
@@ -587,7 +587,7 @@ t-left div {
 
 t-left div p {
   font-size: 1.14vw;
-  font-family: '等线';
+  font-family: "等线";
   color: black;
   position: relative;
   top: 20%;
@@ -597,7 +597,7 @@ t-left div p {
 
 #right {
   background-color: rgba(105, 166, 124, 0.9);
-  background-image: url('css/入口.png');
+  background-image: url("css/入口.png");
   background-position: 95% 40%;
   background-size: 33%;
   background-repeat: no-repeat;
@@ -617,7 +617,7 @@ t-right {
 }
 t-right h1 {
   font-size: 2.7vw;
-  font-family: '等线';
+  font-family: "等线";
   color: white;
 }
 t-right div {
@@ -631,7 +631,7 @@ t-right div {
 }
 t-right div p {
   font-size: 1.15vw;
-  font-family: '等线';
+  font-family: "等线";
   color: black;
   position: relative;
   top: 18%;
@@ -658,84 +658,80 @@ t-right div p {
   width: 100%;
   display: flex;
   flex-direction: column;
-  justify-content:left;
-  align-items:normal;
-  
+  justify-content: left;
+  align-items: normal;
 }
-img.pic{
+img.pic {
   width: 100%;
   background-size: cover;
 }
 
 /* 登录标题文字样式 */
-.login-text1{
-  align-items:normal;
-  font-size: 3rem; 
-  color: #fcd85e; 
+.login-text1 {
+  align-items: normal;
+  font-size: 3rem;
+  color: #fcd85e;
   width: 100%;
-  font-family:"Microsoft Yahei", "微软雅黑", Arial, sans-serif;
+  font-family: "Microsoft Yahei", "微软雅黑", Arial, sans-serif;
   font-weight: bolder;
   position: relative;
   left: 5vw;
   padding-top: 10vh;
 }
-.login-text2{
-  align-items:normal;
-  font-size: 2.5rem; 
-  color: #ffffff; 
+.login-text2 {
+  align-items: normal;
+  font-size: 2.5rem;
+  color: #ffffff;
   width: 100%;
-  font-family:"Microsoft Yahei", "微软雅黑", Arial, sans-serif;
-  font-weight:500;
+  font-family: "Microsoft Yahei", "微软雅黑", Arial, sans-serif;
+  font-weight: 500;
   position: relative;
   left: 5vw;
 }
 /*输入框上面的小字*/
-p{
+p {
   align-items: center !important;
   color: #ffffff;
 }
 
 /*输入框*/
-div.input{
+div.input {
   padding-left: 5vw;
 }
-input{
+input {
   width: 75%;
-  color: #3b3b3b; 
+  color: #3b3b3b;
   font-size: 1.3rem;
   border-radius: 0.5vw;
   border-color: #ffffff;
   background-color: #c8ecc9;
-  padding-top:0.7vh ;
-  padding-bottom:0.4vh ;
-  padding-left:0.7vh ;  
-
+  padding-top: 0.7vh;
+  padding-bottom: 0.4vh;
+  padding-left: 0.7vh;
 
   margin-bottom: 2vh;
 }
-button.login{
+button.login {
   width: 75%;
-  background: linear-gradient(to right, #69A67C, #90C29B);
+  background: linear-gradient(to right, #69a67c, #90c29b);
   border-radius: 0.5vw;
   border-color: #ffffff;
-  padding-top:1.2vh ;
-  padding-bottom:1.2vh ;
+  padding-top: 1.2vh;
+  padding-bottom: 1.2vh;
   margin-top: 1vh;
   margin-bottom: 2vh;
   color: #ffffff;
 }
-button.down{
+button.down {
   width: 25%;
   color: #c8ecc9;
-  background-color: rgba(0,0,0,0);
-  border-color: rgba(0,0,0,0);
+  background-color: rgba(0, 0, 0, 0);
+  border-color: rgba(0, 0, 0, 0);
   text-decoration: underline;
   margin-top: -1vh;
   margin-bottom: 1vh;
   font-size: 1.3rem;
 }
-
-
 
 .ad {
   transition: 1s;
@@ -743,8 +739,6 @@ button.down{
   border-radius: 1.34vw;
   height: 82vh;
 }
-
-
 
 .inline-flex {
   display: flex !important;
