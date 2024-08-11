@@ -760,7 +760,7 @@ button.down{
   overflow-y: auto; /* 启用垂直滚动 */
   padding-right: 2cqb; /* 滚动时右侧留出一些空隙 */
   border: 1px solid #98ba7c; /* 添加边框以区分滚动区域 */
-  background-color: #f9f9f9; /* 滚动区域背景色 */
+  background-color: #f9f9f9f9; /* 滚动区域背景色 */
   border-radius: 1.34vw;
 }
 </style>
