@@ -37,10 +37,7 @@ export default {
           </router-link>
         </div>
       </a-col>
-      <a-col :span="13">
-        <menu>
-          <!--这里-->
-        </menu>
+      <a-col :span="12">
       </a-col>
       <a-col>
         <div class="user">
@@ -51,9 +48,9 @@ export default {
               :style="{
                 backgroundColor: isLogin
                   ? userInfo.role === 'admin'
-                    ? '#ff9f3e'
+                    ? '#69a67c'
                     : userInfo.role === 'super-admin'
-                      ? '#ff3232'
+                      ? '#ff9f3e'
                       : '#3e3ea3'
                   : '#bfbfbf',
               }"
