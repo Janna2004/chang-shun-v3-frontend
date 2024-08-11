@@ -60,7 +60,6 @@ export default {
         distance: 0,
         velocity: 0,
         dirAngle: 0,
-
       },
     };
   },
@@ -273,7 +272,7 @@ export default {
 </script>
 
 <template>
-    <PageWithMenu
+  <PageWithMenu
     :isHome="false"
     :options="menuOpts"
     :multiple="false"
@@ -322,34 +321,31 @@ export default {
               </div>
             </div>
           </div>
-          <div class="video">
-            <div class="inner" v-if="recording">
-              <a-row><VideoCameraOutlined class="recording" />录制中</a-row>
-              <a-row style="margin-top: 1vh">当前帧率：10FPS</a-row>
-              <a-row style="margin-top: 1vh">录制时长：{{ duration }}</a-row>
-            </div>
-            <canvas class="video-feed" id="canvas-feed" />
-            <div class="controller">
-              <div
-                style="color: green"
-                @click="startRecord"
-                v-if="!recording && supported"
-              >
-                开始录制
-              </div>
-              <div style="color: red" v-if="!supported">不支持录制</div>
-              <div style="color: red" @click="endRecord" v-if="recording">
-                停止录制
-              </div>
-              <div style="color: #2b3f52" @click="getFrame">截取当前帧</div>
-            </div>
+        </div>
+        <div class="video">
+          <div class="inner" v-if="recording">
+            <a-row><VideoCameraOutlined class="recording" />录制中</a-row>
+            <a-row style="margin-top: 1vh">当前帧率：10FPS</a-row>
+            <a-row style="margin-top: 1vh">录制时长：{{ duration }}</a-row>
           </div>
+          <canvas class="video-feed" id="canvas-feed" />
+          <div class="controller">
+            <div
+              style="color: green"
+              @click="startRecord"
+              v-if="!recording && supported"
+            >
+              开始录制
+            </div>
+            <div style="color: red" v-if="!supported">不支持录制</div>
+            <div style="color: red" @click="endRecord" v-if="recording">
+              停止录制
+            </div>
+            <div style="color: #2b3f52" @click="getFrame">截取当前帧</div>
+          </div>
+        </div>
       </div>
-      <a-modal
-        title="参数输入"
-        v-model:open="input.input"
-        @ok="sendRequest()"
-      >
+      <a-modal title="参数输入" v-model:open="input.input" @ok="sendRequest()">
         <p>{{ input.notes }}</p>
         <a-input
           v-for="(item, name, index) in input.waiting"

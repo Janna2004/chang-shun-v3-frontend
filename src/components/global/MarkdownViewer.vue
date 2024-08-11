@@ -26,7 +26,6 @@ export default {
   font-family: "Microsoft Yahei", Helvetica, arial, sans-serif;
   font-size: 14px;
   line-height: 1.6;
-  background-color: white;
   padding: 10px 30px 10px 30px;
   color: #516272;
 }

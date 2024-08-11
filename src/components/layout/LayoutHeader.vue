@@ -1,23 +1,23 @@
 <script>
-import { UserOutlined } from '@ant-design/icons-vue'
-import { mapGetters } from 'vuex'
+import { UserOutlined } from "@ant-design/icons-vue";
+import { mapGetters } from "vuex";
 
 export default {
-  name: 'LayoutHeader',
+  name: "LayoutHeader",
   components: { UserOutlined },
   computed: {
     tab: {
       get() {
-        return [this.$route.name]
+        return [this.$route.name];
       },
       set() {},
     },
-    ...mapGetters(['userInfo']),
+    ...mapGetters(["userInfo"]),
     isLogin() {
-      return this.$store.getters.userInfo.role !== 'unregistered'
+      return this.$store.getters.userInfo.role !== "unregistered";
     },
   },
-}
+};
 </script>
 
 <template>
@@ -37,15 +37,7 @@ export default {
           </router-link>
         </div>
       </a-col>
-      <a-col :span="13">
-        <menu>
-          <router-link :to="{ name: 'Home' }">
-            <li id="home">首页</li>
-          </router-link>
-          <router-link :to="{ name: 'Home' }" @click="$store.commit('changeModule', 'setting')">
-            <li id="about">指南</li>
-          </router-link>
-        </menu>
+      <a-col :span="12">
       </a-col>
       <a-col>
         <div class="user">
@@ -56,9 +48,9 @@ export default {
               :style="{
                 backgroundColor: isLogin
                   ? userInfo.role === 'admin'
-                    ? '#ff9f3e'
+                    ? '#69a67c'
                     : userInfo.role === 'super-admin'
-                      ? '#ff3232'
+                      ? '#ff9f3e'
                       : '#3e3ea3'
                   : '#bfbfbf',
               }"
@@ -67,7 +59,7 @@ export default {
             </a-avatar>
             <span
               style="margin-left: 1.1vw; color: #3e3e3e; font-size: 1.1rem"
-              >{{ isLogin ? userInfo.username : '登录' }}</span
+              >{{ isLogin ? userInfo.username : "登录" }}</span
             >
           </router-link>
         </div>
@@ -103,7 +95,7 @@ menu li#home {
 }
 
 menu li#home::before {
-  content: '';
+  content: "";
   display: inline-block;
   background: url(Home.png);
   background-size: cover;
@@ -129,7 +121,7 @@ menu li#about {
 }
 
 menu li#about::before {
-  content: '';
+  content: "";
   display: inline-block;
   background: url(Compass.png);
   background-size: cover;
@@ -143,7 +135,7 @@ menu li#about::before {
 #topic {
   color: black;
   font-size: 1.9rem;
-  font-family: '等线';
+  font-family: "等线";
   position: relative;
   top: 1.2vw;
 }
