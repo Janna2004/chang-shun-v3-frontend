@@ -2,7 +2,7 @@ import axios from "axios";
 
 const instance = axios.create({
   baseURL: "/chang-shun/api",
-  timeout: 5000,
+  timeout: 10000,
 });
 
 // 请求拦截器
