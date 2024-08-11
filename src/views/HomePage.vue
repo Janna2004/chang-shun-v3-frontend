@@ -18,10 +18,10 @@ export default {
   },
   data() {
     return {
-      menuOpts: [
+      menuOpts: [ 
         {
           iconUrl: solidIcon,
-          name: '土壤检测',
+          name: '土壤检测 ',
           value: 'soil',
         },
         {
@@ -352,7 +352,7 @@ export default {
         <div id="content" class="translucent-box">
           <template v-if="currentModule === 'user'">
             <div v-if="isLoggedIn" style="height: 100%; width: 100%">
-              <!-- 插入 userpage 的内容 -->
+              <!-- 插入 userpage 的内容 --> 
               <a-page-header
                 style="
                   border-bottom: 1px solid rgb(235, 237, 240);
@@ -403,9 +403,12 @@ export default {
                     v-if="!isRegister"
                     :style="{ order: 0, width: '100%' }"
                   >
-                    <div style="font-size: 2em; color: #3e3e3e; width: 100%">
-                      用户登录
-                    </div>
+                    <h1 class="login-text1" >
+                      长顺县智慧农业
+                    </h1>
+                    <h1 class="login-text2" >
+                       登录
+                    </h1>
                     <div style="width: 80%; margin-top: 10vh">
                       <a-input
                         v-model:value="login.phone"
@@ -416,7 +419,7 @@ export default {
                         placeholder="输入密码"
                         @keydown.enter="userLogin"
                       />
-                      <a-button
+                      <button
                         type="primary"
                         style="width: 100%"
                         :loading="loginLoading"
@@ -425,17 +428,17 @@ export default {
                           login.phone.length === 0
                         "
                         @click="userLogin"
-                        >登录</a-button
+                        >登录</button
                       >
                     </div>
                     <div
                       class="register"
                       style="width: 80%; display: flex; flex-direction: row"
                     >
-                      <a-button type="link" @click="isRegister = true"
-                        >立即注册</a-button
+                      <button type="link" @click="isRegister = true"
+                        >立即注册</button
                       >
-                      <a-button type="link">忘记密码</a-button>
+                      <button type="link">忘记密码</button>
                     </div>
                   </div>
 
@@ -642,10 +645,32 @@ t-right div p {
   width: 45%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content:left;
   align-items: center;
 }
 
+/* 登录标题文字样式 */
+.login-text1{
+  align-items:normal;
+  font-size: 3em; 
+  color: #fcd85e; 
+  width: 100%;
+  font-family:"Microsoft Yahei", "微软雅黑", Arial, sans-serif;
+  font-weight: bolder;
+  position: relative;
+  left: 5vw;
+  padding-top: 10vh;
+}
+.login-text2{
+  align-items:normal;
+  font-size: 2.5em; 
+  color: #ffffff; 
+  width: 100%;
+  font-family:"Microsoft Yahei", "微软雅黑", Arial, sans-serif;
+  font-weight:500;
+  position: relative;
+  left: 5vw;
+}
 .info div input,
 .info:deep(.ant-input-search),
 .info:deep(.ant-input-password) {
