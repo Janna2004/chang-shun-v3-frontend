@@ -4,14 +4,26 @@ import { VideoCameraOutlined } from "@ant-design/icons-vue";
 import dayjs from "dayjs";
 import fixWebmDuration from "fix-webm-duration";
 import { notification } from "ant-design-vue";
+import PageWithMenu from '../../components/global/PageWithMenu.vue';
+import solidIcon from '@/assets/icons/土壤监测设备 1.png'
 
 const supported = MediaRecorder.isTypeSupported("video/webm;codecs=vp9");
 
 export default {
   name: "UAVControl",
-  components: { VideoCameraOutlined },
+  components: { VideoCameraOutlined, PageWithMenu },
   data() {
     return {
+      menuOpts: [
+          { iconUrl: solidIcon, name: '水平校准', value: 'levelCalibration' },
+          { iconUrl: solidIcon, name: '磁力计较准', value: 'magnetometerCalibration' },
+          { iconUrl: solidIcon, name: '6面加速度校准', value: 'accelerometerCalibration' },
+          { iconUrl: solidIcon, name: '陀螺仪校准', value: 'gyroscopeCalibration' },
+          { iconUrl: solidIcon, name: '飞控解锁', value: 'unlock' },
+          { iconUrl: solidIcon, name: '飞控上锁', value: 'lock' }
+        ],
+      currentModule: 'temperature',
+
       supported,
       // 无人机服务器地址
       host: "http://conc.ddns.net:5000/",
@@ -43,6 +55,7 @@ export default {
         distance: 0,
         velocity: 0,
         dirAngle: 0,
+
       },
     };
   },
@@ -255,26 +268,14 @@ export default {
 </script>
 
 <template>
-  <body>
-    <a-row>
-      <a-col span="4">
-        <ul id="side">
-          <p id="general">Correcting</p>
-          <li @click="sendRequest('hCalibrate')">水平校准</li>
-          <li @click="sendRequest('mCalibrate')">磁力计校准</li>
-          <li @click="sendRequest('aCalibrate')">6面加速度校准</li>
-          <li @click="sendRequest('gCalibrate')">陀螺仪校准</li>
-          <p id="general">Protective</p>
-          <li @click="sendRequest('unlock')">飞控解锁</li>
-          <li @click="sendRequest('lock')">飞控上锁</li>
-          <p id="general">_______________</p>
-          <router-link to="/home" exact>
-            <li id="setting">返回</li>
-          </router-link>
-        </ul>
-      </a-col>
-      <a-col span="20">
-        <div class="main">
+    <PageWithMenu
+    :isHome="false"
+    :options="menuOpts"
+    :multiple="false"
+    v-model:selected="currentModule"
+  >
+    <template #content>
+      <div class="main">
           <div class="top">
             <h3>无人机控制</h3>
             <div class="button-group">
@@ -335,27 +336,26 @@ export default {
               <div style="color: #2b3f52" @click="getFrame">截取当前帧</div>
             </div>
           </div>
-        </div>
-        <a-modal
-          title="参数输入"
-          v-model:open="input.input"
-          @ok="sendRequest()"
+      </div>
+      <a-modal
+        title="参数输入"
+        v-model:open="input.input"
+        @ok="sendRequest()"
+      >
+        <p>{{ input.notes }}</p>
+        <a-input
+          v-for="(item, name, index) in input.waiting"
+          :key="index"
+          v-model:value="input[name]"
+          style="margin-top: 2vh"
         >
-          <p>{{ input.notes }}</p>
-          <a-input
-            v-for="(item, name, index) in input.waiting"
-            :key="index"
-            v-model:value="input[name]"
-            style="margin-top: 2vh"
-          >
-            <template #prefix>
-              {{ item }}
-            </template>
-          </a-input>
-        </a-modal>
-      </a-col>
-    </a-row>
-  </body>
+          <template #prefix>
+            {{ item }}
+          </template>
+        </a-input>
+      </a-modal>
+    </template>
+  </PageWithMenu>
 </template>
 
 <style scoped>
