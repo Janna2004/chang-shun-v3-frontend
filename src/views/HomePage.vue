@@ -395,8 +395,10 @@ export default {
               <div style="height: 100%; width: 100%">
                 <div class="user">
                   <div class="ad" :style="{ order: isRegister ? 0 : 1 }">
-                    海报/宣传图
+                    
+                    <img class="pic" src="https://www.gzcsx.gov.cn/syqt/jxcsbjqh/202310/W020231017426763808586_ORIGIN.png">
                   </div>
+                 
                   <!--登陆界面-->
                   <div
                     class="info"
@@ -409,78 +411,89 @@ export default {
                     <h1 class="login-text2" >
                        登录
                     </h1>
-                    <div style="width: 80%; margin-top: 10vh">
-                      <a-input
-                        v-model:value="login.phone"
-                        placeholder="输入手机号"
-                      />
-                      <a-input-password
-                        v-model:value="login.password"
-                        placeholder="输入密码"
-                        @keydown.enter="userLogin"
-                      />
-                      <button
-                        type="primary"
-                        style="width: 100%"
-                        :loading="loginLoading"
-                        :disabled="
-                          login.password.length === 0 ||
-                          login.phone.length === 0
-                        "
-                        @click="userLogin"
-                        >登录</button
+                    
+                    <div class="input">
+                      <div style=" margin-top: 3vh">
+                        <p>手机号码</p>
+                        <input class="phone-num"
+                          v-model="login.phone"
+                          placeholder="输入手机号"
+                        />
+                        <p>密码</p>                      
+                        <input class="password"
+                          v-model="login.password"
+                          placeholder="输入密码"
+                          @keydown.enter="userLogin"
+                        />
+                        <button class="login"
+                          
+                          
+                          :loading="loginLoading"
+                          :disabled="
+                            login.password.length === 0 ||
+                            login.phone.length === 0
+                          "
+                          @click="userLogin"
+                          >登 录 -></button
+                        >
+                      </div>
+                      <div
+                        class="register"
+                        style="width: 80%; display: flex; flex-direction: row"
                       >
-                    </div>
-                    <div
-                      class="register"
-                      style="width: 80%; display: flex; flex-direction: row"
-                    >
-                      <button type="link" @click="isRegister = true"
-                        >立即注册</button
-                      >
-                      <button type="link">忘记密码</button>
+                        <button class="down" type="link" @click="isRegister = true"
+                          >立即注册</button
+                        >
+                        <button class="down" type="link">忘记密码</button>
+                      </div>
                     </div>
                   </div>
 
                   <!--注册页面-->
                   <div v-if="isRegister" :style="{ order: 1, width: '100%' }">
-                    <div style="font-size: 2em; color: #3e3e3e; width: 100%">
-                      注册
-                    </div>
-                    <div style="width: 80%; margin-top: 30px">
-                      <a-input
-                        v-model:value="register.username"
+                    <h1 class="login-text1" >
+                      长顺县智慧农业
+                    </h1>
+                    <h1 class="login-text2" >
+                       注册
+                    </h1>
+  
+                    <div class="input">
+                      <input
+                        v-model="register.username"
                         placeholder="输入用户名"
                       />
-                      <a-input-search
-                        v-model:value="register.phone"
+                      <input
+                        v-model="register.phone"
                         placeholder="输入手机号"
                         :enter-button="sendCodeInfo"
                         @search="sendCode"
                         :disabled="sendCodeInfo !== '发送验证码'"
                       />
-                      <a-input-password
-                        v-model:value="register.password1"
+                      <button class="down" @click="sendCode">发送验证码</button>
+                      <input
+                        v-model="register.password1"
                         placeholder="输入密码"
                       />
-                      <a-input-password
-                        v-model:value="register.password2"
+                      <input
+                        v-model="register.password2"
                         placeholder="重复密码"
                         @keydown.enter="userRegister"
                       />
-                      <div class="inline-flex">
-                        <a-input
-                          v-model:value="register.code"
+                      <input
+                          v-model="register.code"
                           placeholder="输入验证码"
-                        />
+                      />
+                      <div class="inline-flex">
+                        
                         <p>已有帐号？</p>
-                        <a-button type="link" @click="isRegister = false"
-                          >登录</a-button
+                        <button  class="down" type="link" @click="isRegister = false"
+                          >去登录</button
                         >
                       </div>
-                      <a-button
+                      <button class="login"
                         type="primary"
-                        style="width: 100%"
+                        
                         :loading="registerLoading"
                         :disabled="
                           register.password1.length === 0 ||
@@ -491,7 +504,7 @@ export default {
                         @click="userRegister"
                       >
                         注册
-                      </a-button>
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -627,7 +640,7 @@ t-right div p {
 
 /* tools页面样式 */
 .translucent-box {
-  margin-top: 6vh;
+  margin-top: 0vh;
   margin-left: 2vh;
   margin-right: 7vh;
   height: 82vh;
@@ -642,17 +655,22 @@ t-right div p {
 }
 
 .user div {
-  width: 45%;
+  width: 100%;
   display: flex;
   flex-direction: column;
   justify-content:left;
-  align-items: center;
+  align-items:normal;
+  
+}
+img.pic{
+  width: 100%;
+  background-size: cover;
 }
 
 /* 登录标题文字样式 */
 .login-text1{
   align-items:normal;
-  font-size: 3em; 
+  font-size: 3rem; 
   color: #fcd85e; 
   width: 100%;
   font-family:"Microsoft Yahei", "微软雅黑", Arial, sans-serif;
@@ -663,7 +681,7 @@ t-right div p {
 }
 .login-text2{
   align-items:normal;
-  font-size: 2.5em; 
+  font-size: 2.5rem; 
   color: #ffffff; 
   width: 100%;
   font-family:"Microsoft Yahei", "微软雅黑", Arial, sans-serif;
@@ -671,27 +689,62 @@ t-right div p {
   position: relative;
   left: 5vw;
 }
-.info div input,
-.info:deep(.ant-input-search),
-.info:deep(.ant-input-password) {
-  margin-bottom: 20px;
+/*输入框上面的小字*/
+p{
+  align-items: center !important;
+  color: #ffffff;
 }
 
-.register {
-  border-top: 1px #e3e3e3 solid;
-  margin-top: 3vh;
+/*输入框*/
+div.input{
+  padding-left: 5vw;
 }
+input{
+  width: 75%;
+  color: #3b3b3b; 
+  font-size: 1.3rem;
+  border-radius: 0.5vw;
+  border-color: #ffffff;
+  background-color: #c8ecc9;
+  padding-top:0.7vh ;
+  padding-bottom:0.4vh ;
+  padding-left:0.7vh ;  
+
+
+  margin-bottom: 2vh;
+}
+button.login{
+  width: 75%;
+  background: linear-gradient(to right, #69A67C, #90C29B);
+  border-radius: 0.5vw;
+  border-color: #ffffff;
+  padding-top:1.2vh ;
+  padding-bottom:1.2vh ;
+  margin-top: 1vh;
+  margin-bottom: 2vh;
+  color: #ffffff;
+}
+button.down{
+  width: 25%;
+  color: #c8ecc9;
+  background-color: rgba(0,0,0,0);
+  border-color: rgba(0,0,0,0);
+  text-decoration: underline;
+  margin-top: -1vh;
+  margin-bottom: 1vh;
+  font-size: 1.3rem;
+}
+
+
 
 .ad {
   transition: 1s;
-  border: solid 1px red;
+  border: solid 1px rgb(255, 255, 255);
   border-radius: 1.34vw;
   height: 82vh;
 }
 
-.register button {
-  display: inline;
-}
+
 
 .inline-flex {
   display: flex !important;
