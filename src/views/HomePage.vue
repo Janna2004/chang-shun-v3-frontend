@@ -470,7 +470,7 @@ export default {
                         @search="sendCode"
                         :disabled="sendCodeInfo !== '发送验证码'"
                       />
-                      <button class="down" @click="sendCode">发送验证码</button>
+                      
                       <input
                         v-model="register.password1"
                         placeholder="输入密码"
@@ -484,10 +484,11 @@ export default {
                           v-model="register.code"
                           placeholder="输入验证码"
                       />
+                      <button class="down1" @click="sendCode">发送验证码</button>
                       <div class="inline-flex">
                         
                         <p>已有帐号？</p>
-                        <button  class="down" type="link" @click="isRegister = false"
+                        <button  class="down2" type="link" @click="isRegister = false"
                           >去登录</button
                         >
                       </div>
@@ -664,7 +665,10 @@ t-right div p {
 }
 img.pic{
   width: 100%;
+  height: 100%;
   background-size: cover;
+  object-fit: cover;
+  border-radius: 2vw;
 }
 
 /* 登录标题文字样式 */
@@ -678,6 +682,7 @@ img.pic{
   position: relative;
   left: 5vw;
   padding-top: 10vh;
+  margin-top: -4vh;
 }
 .login-text2{
   align-items:normal;
@@ -710,8 +715,8 @@ input{
   padding-bottom:0.4vh ;
   padding-left:0.7vh ;  
 
-
-  margin-bottom: 2vh;
+  margin-top: -2vh;
+  margin-bottom: 3vh;
 }
 button.login{
   width: 75%;
@@ -720,27 +725,45 @@ button.login{
   border-color: #ffffff;
   padding-top:1.2vh ;
   padding-bottom:1.2vh ;
-  margin-top: 1vh;
+  margin-top: 0.5vh;
   margin-bottom: 2vh;
   color: #ffffff;
 }
 button.down{
-  width: 25%;
+  width: 35%;
   color: #c8ecc9;
   background-color: rgba(0,0,0,0);
   border-color: rgba(0,0,0,0);
   text-decoration: underline;
   margin-top: -1vh;
-  margin-bottom: 1vh;
-  font-size: 1.3rem;
+  margin-bottom: 0vh;
+  font-size: 1.6rem;
 }
 
+button.down1{
+  width: 30%;
+  color: #c8ecc9;
+  background-color: rgba(0,0,0,0);
+  border-color: rgba(0,0,0,0);
+  text-decoration: underline;
+  margin-top: -2.2vh;
+  margin-bottom: 2vh;
+  font-size: 1.6rem;
+}button.down2{
+  width: 30%;
+  color: #c8ecc9;
+  background-color: rgba(0,0,0,0);
+  border-color: rgba(0,0,0,0);
+  text-decoration: underline;
+  margin-top: -2.2vh;
+  margin-bottom: 1vh;
+  font-size: 1.7rem;
+}
 
 
 .ad {
   transition: 1s;
-  border: solid 1px rgb(255, 255, 255);
-  border-radius: 1.34vw;
+  
   height: 82vh;
 }
 

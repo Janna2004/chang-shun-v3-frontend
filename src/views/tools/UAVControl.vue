@@ -5,7 +5,12 @@ import dayjs from "dayjs";
 import fixWebmDuration from "fix-webm-duration";
 import { notification } from "ant-design-vue";
 import PageWithMenu from '../../components/global/PageWithMenu.vue';
-import solidIcon from '@/assets/icons/土壤监测设备 1.png'
+import U1 from '@/assets/icons/U1.png'
+import U2 from '@/assets/icons/U2.png'
+import U3 from '@/assets/icons/U3.png'
+import U4 from '@/assets/icons/U4.png'
+import U5 from '@/assets/icons/U5.png'
+import U6 from '@/assets/icons/U6.png'
 
 const supported = MediaRecorder.isTypeSupported("video/webm;codecs=vp9");
 
@@ -15,12 +20,12 @@ export default {
   data() {
     return {
       menuOpts: [
-          { iconUrl: solidIcon, name: '水平校准', value: 'levelCalibration' },
-          { iconUrl: solidIcon, name: '磁力计较准', value: 'magnetometerCalibration' },
-          { iconUrl: solidIcon, name: '6面加速度校准', value: 'accelerometerCalibration' },
-          { iconUrl: solidIcon, name: '陀螺仪校准', value: 'gyroscopeCalibration' },
-          { iconUrl: solidIcon, name: '飞控解锁', value: 'unlock' },
-          { iconUrl: solidIcon, name: '飞控上锁', value: 'lock' }
+          { iconUrl: U1, name: '水平校准', value: 'levelCalibration' },
+          { iconUrl: U2, name: '磁力计较准', value: 'magnetometerCalibration' },
+          { iconUrl: U3, name: '6面加速度校准', value: 'accelerometerCalibration' },
+          { iconUrl: U4, name: '陀螺仪校准', value: 'gyroscopeCalibration' },
+          { iconUrl: U5, name: '飞控解锁', value: 'unlock' },
+          { iconUrl: U6, name: '飞控上锁', value: 'lock' }
         ],
       currentModule: 'temperature',
 
@@ -277,7 +282,10 @@ export default {
     <template #content>
       <div class="main">
           <div class="top">
-            <h3>无人机控制</h3>
+            <div class="UAV">
+              
+              <div>无人机控制</div>
+            </div>
             <div class="button-group">
               <p>飞控模式</p>
               <div class="custom-button-group">
@@ -365,59 +373,25 @@ body {
   background: url(../css/background-image.png);
 }
 
-ul#side {
-  list-style: none;
-  margin: 2.6vw auto 4.6vw 0px;
-  position: relative;
-  width: 90%;
-  background-color: #c8ecc9;
-  padding-left: 0px;
-  border-top-right-radius: 2vw;
-  border-bottom-right-radius: 2vw;
-  font-family: "等线";
-  border: #69a67c 0.13vw solid;
-}
 
-ul#side li {
-  font-size: 2.13vw;
-  color: black;
-  position: relative;
-  background-color: #b0dab5;
-  border-top-right-radius: 0.66vw;
-  border-bottom-right-radius: 0.66vw;
-  width: 85%;
-  padding-top: 1.3vh;
-  padding-bottom: 1.2vh;
-  padding-left: 1.13vw;
-  margin-bottom: 2.5vh;
-  cursor: pointer;
-}
 
-ul#side li.active-item {
-  background-color: rgb(105, 166, 124);
-  color: white;
-  transform: translateX(18%);
-  transition: transform 0.3s ease;
-  border-top-right-radius: 0vw;
-  border-bottom-right-radius: 0vw;
-  border-top-left-radius: 0.66vw;
-  border-bottom-left-radius: 0.66vw;
-}
 
-#general {
-  color: #69a67c;
-  font-size: 2vw;
-  margin: 1vh auto 1.33vh 0.46vw;
-  padding-top: 1.3vh;
-}
 
 .main {
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
-  padding-top: 2vh;
+  padding-top: 0vh;
 }
+div.UAV{
+  color: #558b6e;
+  font-size: 1.6rem;
+  margin-bottom: 1vh;
+}
+
+
+
 
 .top {
   width: 95%;
@@ -425,9 +399,9 @@ ul#side li.active-item {
   flex-direction: column;
   align-items: left;
   background-color: rgb(200, 236, 201);
-  margin: 2vw auto;
+  margin: 0vw auto 2vh auto;
   padding: 2vh 2vw;
-  border-radius: 2vw;
+  border-radius: 1vw;
   font-family: "等线";
   border: #69a67c 0.13vw solid;
 }
@@ -439,33 +413,40 @@ ul#side li.active-item {
   align-items: center;
   justify-content: flex-start;
   flex-direction: row;
+  
+}
+div.button-group p{
+  position: relative;
+  top:1.4vh;
+  margin-left:1vw;
 }
 
 .custom-button-group {
   display: flex;
-  gap: 1vw;
+  margin-left: 1vw;
 }
 
 .custom-button {
-  background-color: #69a67c;
+  box-shadow: none;
+  background-color: #B0DAB5;
   color: black;
-  border: none;
-  padding: 0.2vw 0.6vw;
+  border:none;
+  padding: 0.4vw 0.9vw;
   cursor: pointer;
 }
-
 .custom-button:first-child {
-  border-top-left-radius: 1.33vw;
-  border-bottom-left-radius: 1.33vw;
+  border-top-left-radius: 0.7vw;
+  border-bottom-left-radius: 0.7vw;
+}
+.custom-button:last-child {
+  border-top-right-radius: 0.7vw;
+  border-bottom-right-radius: 0.7vw;
 }
 
-.custom-button:last-child {
-  border-top-right-radius: 1.33vw;
-  border-bottom-right-radius: 1.33vw;
-}
+
 
 .custom-button:hover {
-  background-color: #558b6e;
+  background-color: #7EB68C;
   color: white;
 }
 
