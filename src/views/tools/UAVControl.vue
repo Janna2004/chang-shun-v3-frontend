@@ -344,7 +344,7 @@ export default {
             <div style="color: #2b3f52" @click="getFrame">截取当前帧</div>
           </div>
         </div>
-      </div>
+     
       <a-modal title="参数输入" v-model:open="input.input" @ok="sendRequest()">
         <p>{{ input.notes }}</p>
         <a-input
