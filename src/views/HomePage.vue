@@ -95,9 +95,13 @@ export default {
   },
   watch: {
     currentModule(newValue) {
+      this.$router.push({ name: "Home", params: { mode: newValue } });
       if (newValue === "setting") {
         this.loadMarkdown();
       }
+    },
+    $route(to, from) {
+      this.currentModule = to.params.mode || "soil";
     },
   },
   computed: {

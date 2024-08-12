@@ -41,7 +41,7 @@ export default {
       </a-col>
       <a-col>
         <div class="user">
-          <router-link :to="{ name: isLogin ? 'UserInfo' : 'Login' }">
+          <router-link :to="{ name: 'Home', params: { mode: 'user' } }">
             <a-avatar
               shape="square"
               :size="40"

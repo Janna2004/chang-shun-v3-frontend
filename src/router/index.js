@@ -15,10 +15,10 @@ const routes = [
   // 主功能区
   {
     path: "/",
-    redirect: "/home",
+    redirect: "/home/solid",
   },
   {
-    path: "/home",
+    path: "/home/:mode?",
     name: "Home",
     component: () => import("@/views/HomePage.vue"),
   },
