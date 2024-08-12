@@ -146,6 +146,7 @@ export default {
     width: fit-content;
     font-size: 1.6vw;
     background-color: #b0dab5;
+    color: #000;
     padding: 0.5em;
     border-radius: 0.5em;
     margin-left: 2em;
