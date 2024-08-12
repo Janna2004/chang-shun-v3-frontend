@@ -57,6 +57,9 @@ export default {
       ],
 
       imgUrl: "",
+
+      // 弹出框
+      isModalVisible: false
     };
   },
   methods: {
@@ -72,11 +75,10 @@ export default {
         return;
       }
       this.loading = true;
+      console.log(this.convertToJson);
       this.$axios
         .post("/ai/getAlert", {
-          params: {
-            ...this.convertToJson,
-          },
+          ...this.convertToJson,
         })
         .then((res) => {
           this.alertInfo = res.data.data;
@@ -85,17 +87,66 @@ export default {
           this.loading = false;
         });
     },
+    async handleToggleProcessed(record) {
+      try {
+        const response = await this.$axios.put('/ai/alert', {
+          id: record.id,
+          handled: !record.handled,
+        });
+
+        if (response.data.code === 200) {
+          // Update the local state
+          record.handled = !record.handled;
+          message.success(`状态已更新为${record.handled ? "已处理" : "未处理"}`);
+        } else {
+          message.error('处理失败，请重试');
+        }
+      } catch (error) {
+        message.error('处理失败，请检查网络');
+      }
+    },
     // 智能识别
     uploadImg(file) {
       this.imgUrl = URL.createObjectURL(file);
       this.curStep = 1;
     },
+    // 弹出框
+    showDetails(record) {
+      // Populate the selectedAlert object with the details of the clicked record
+      this.selectedAlert = record;
+
+      // Show the modal
+      this.isModalVisible = true;
+    },
+
+    handleCancel() {
+      // Hide the modal and reset selectedAlert
+      this.isModalVisible = false;
+      this.selectedAlert = {};
+    },
+
+    async handleToggleProcessed(record) {
+      try {
+        const response = await this.$axios.put('/ai/alert', {
+          id: record.id,
+          handled: !record.handled,
+        });
+
+        if (response.data.code === 200) {
+          // Update the local state
+          record.handled = !record.handled;
+        } else {
+          message.error('处理失败，请重试');
+        }
+      } catch (error) {
+        message.error('处理失败，请检查网络');
+      }
+    }
   },
   computed: {
     // 将筛选条件转换为json格式
     convertToJson() {
       return {
-        // pest_name: "原神",
         pest_name: this.filter.checker.pest_name
           ? this.filter.pest_name
           : undefined,
@@ -256,12 +307,11 @@ export default {
                 </a>
                 <template #overlay>
                   <a-menu>
-                    <a-menu-item
-                      v-for="index in 10"
-                      :key="index"
-                      @click="filter.pest_name = `${index}病虫害`"
-                    >
-                      <span>{{ index }}病虫害</span>
+                    <a-menu-item @click="filter.pest_name = '原神'">
+                      <span>原神</span>
+                    </a-menu-item>
+                    <a-menu-item @click="filter.pest_name = '一级病虫害'">
+                      <span>一级病虫害</span>
                     </a-menu-item>
                   </a-menu>
                 </template>
@@ -274,63 +324,66 @@ export default {
           </a-space>
         </div>
 
-        <a-collapse
-          v-model:activeKey="activeKey"
-          :bordered="false"
-          ghost
-          style="border: 1px solid #939393; width: 97%; margin: auto"
-        >
-          <a-collapse-panel
-            v-for="(item, index) in alertInfo"
-            :key="index"
-            :header="`${item.pest_name}：${item.pest_description}`"
-            class="info"
-          >
-            <a-descriptions style="margin: auto" :column="3" bordered>
-              <a-descriptions-item label="详细信息" :span="3">{{
-                item.pest_description
-              }}</a-descriptions-item>
-              <a-descriptions-item label="病虫害类别" :span="3">{{
-                item.pest_name
-              }}</a-descriptions-item>
-              <a-descriptions-item label="预警时间">{{
-                dayjs(item.alert_time).format("YYYY-MM-DD HH:mm:ss")
-              }}</a-descriptions-item>
-              <a-descriptions-item label="预警地点"
-                >经纬度({{ item.latitude }}°,{{
-                  item.longitude
-                }}°)</a-descriptions-item
-              >
-              <a-descriptions-item label="预警概率">{{
-                item.pest_probability
-              }}</a-descriptions-item>
-              <a-descriptions-item label="勘测无人机编号">{{
-                item.drone_id
-              }}</a-descriptions-item>
-              <a-descriptions-item label="勘测农田编号">{{
-                item.field_id
-              }}</a-descriptions-item>
-              <a-descriptions-item label="处理状态">{{
-                item.handled ? "已处理" : "未处理"
-              }}</a-descriptions-item>
-              <a-descriptions-item label="现场图片" :span="3">
-                <div class="image">
-                  <a-image-preview-group>
-                    <a-image
-                      :src="image"
-                      :width="200"
-                      v-for="(image, index) in item.image_paths"
-                      :key="index"
-                    />
-                  </a-image-preview-group>
-                </div>
-              </a-descriptions-item>
-            </a-descriptions>
-          </a-collapse-panel>
-        </a-collapse>
+        <div class="table-container">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>病虫害名称</th>
+                <th>预警时间</th>
+                <th>预警地点</th>
+                <th>农田编号</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="item in alertInfo" :key="item.id">
+                <td>{{ item.id }}</td>
+                <td>{{ item.pest_name }}</td>
+                <td>{{ dayjs(item.alert_time).format("YYYY-MM-DD HH:mm:ss") }}</td>
+                <td>经纬度({{ item.latitude }}°, {{ item.longitude }}°)</td>
+                <td>{{ item.field_id }}</td>
+                <td>
+                  <button @click="showDetails(item)">详细</button>
+                  <button @click="handleToggleProcessed(item)">
+                    {{ item.handled ? "已处理" : "处理" }}
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </template>
     </template>
   </PageWithMenu>
+
+  <!-- 详细信息弹出框 --> 
+    <a-modal v-model:visible="isModalVisible" title="详细信息" @cancel="handleCancel" footer={null}>
+      <a-descriptions style="margin: auto" :column="3" bordered>
+        <a-descriptions-item label="详细信息" :span="3">{{ selectedAlert.pest_description }}</a-descriptions-item>
+        <a-descriptions-item label="病虫害类别" :span="3">{{ selectedAlert.pest_name }}</a-descriptions-item>
+        <a-descriptions-item label="预警时间">{{ dayjs(selectedAlert.alert_time).format("YYYY-MM-DD HH:mm:ss") }}</a-descriptions-item>
+        <a-descriptions-item label="预警地点">经纬度({{ selectedAlert.latitude }}°,{{
+          selectedAlert.longitude
+        }}°)</a-descriptions-item>
+        <a-descriptions-item label="预警概率">{{ selectedAlert.pest_probability }}</a-descriptions-item>
+        <a-descriptions-item label="勘测无人机编号">{{ selectedAlert.drone_id }}</a-descriptions-item>
+        <a-descriptions-item label="勘测农田编号">{{ selectedAlert.field_id }}</a-descriptions-item>
+        <a-descriptions-item label="处理状态">{{ selectedAlert.handled ? "已处理" : "未处理" }}</a-descriptions-item>
+        <a-descriptions-item label="现场图片" :span="3">
+          <div class="image">
+            <a-image-preview-group>
+              <a-image
+                :src="image"
+                :width="200"
+                v-for="(image, index) in selectedAlert.image_paths"
+                :key="index"
+              />
+            </a-image-preview-group>
+          </div>
+        </a-descriptions-item>
+      </a-descriptions>
+    </a-modal>
   </a-config-provider>
 </template>
 
@@ -495,5 +548,48 @@ export default {
   &:hover {
     background-color: #90c29b;
   }
+}
+
+/* 表格 */
+.table-container {
+  margin: 20px;
+}
+
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1em;
+}
+
+.custom-table th,
+.custom-table td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
+
+.custom-table th {
+  background-color: #69a67c;
+  color: white;
+}
+
+.custom-table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.custom-table tr:hover {
+  background-color: #ddd;
+}
+
+.custom-table button {
+  background-color: #69a67c;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.custom-table button:hover {
+  background-color: #558b5a;
 }
 </style>
