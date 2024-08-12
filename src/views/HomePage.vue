@@ -485,7 +485,7 @@ export default {
                         
                       </div>
                       <button
-                        class="login"
+                        class="register"
                         type="primary"
                         :loading="registerLoading"
                         :disabled="
@@ -706,19 +706,39 @@ input {
   padding-bottom:0.4vh ;
   padding-left:0.7vh ;  
 
-  margin-top: -2vh;
-  margin-bottom: 3vh;
+  margin-top: -0.5vh;
+  margin-bottom: 2vh;
 }
 button.login {
   width: 75%;
   background: linear-gradient(to right, #69a67c, #90c29b);
   border-radius: 0.5vw;
+  border: solid;
+  border-width: 0.1vw;
+  outline: none;
   border-color: #ffffff;
   padding-top:1.2vh ;
   padding-bottom:1.2vh ;
   margin-top: 0.5vh;
   margin-bottom: 2vh;
   color: #ffffff;
+  box-shadow: none;
+}
+button.register {
+  width: 75%;
+  background: linear-gradient(to right, #69a67c, #90c29b);
+  border-radius: 0.5vw;
+  border: solid;
+  border-width: 0.1vw;
+  outline: none;
+  border-color: #ffffff;
+  padding-top:1.2vh ;
+  padding-bottom:1.2vh ;
+  margin-top: -3vh;
+  margin-bottom: 2vh;
+  color: #ffffff;
+  box-shadow: none;
+  
 }
 button.down{
   width: 35%;

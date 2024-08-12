@@ -114,6 +114,13 @@ export default {
 </script>
 
 <template>
+  <a-config-provider
+    :theme="{
+        token: {
+          colorPrimary: '#69a67c',
+        },
+      }"
+  >
   <PageWithMenu
     :isHome="false"
     :options="menuOpts"
@@ -205,8 +212,9 @@ export default {
           </a-row>
         </div>
       </template>
+      
       <template v-else-if="selected === 'history'">
-        <a-card class="filter" :bordered="false" title="筛选条件">
+        <div class="filter" :bordered="false" title="筛选条件">
           <a-space direction="vertical" size="middle">
             <a-row>
               <div style="display: flex; align-items: center; font-size: 1.2em">
@@ -264,7 +272,8 @@ export default {
               <a-spin :spinning="loading" />
             </a-row>
           </a-space>
-        </a-card>
+        </div>
+
         <a-collapse
           v-model:activeKey="activeKey"
           :bordered="false"
@@ -322,13 +331,18 @@ export default {
       </template>
     </template>
   </PageWithMenu>
+  </a-config-provider>
 </template>
 
 <style scoped>
 /* 历史记录 */
 .filter {
-  width: 800px;
-  margin: 20px auto 30px 30px;
+  border:solid  #69a67c;
+  border-width: vw;
+  background-color: #c8ecc9;
+  border-radius: 1vw;
+  padding: 6vh 4vw 6vh 4vw;
+  margin: 1vh 2vw 1vh 2vw;
 }
 
 .info {
