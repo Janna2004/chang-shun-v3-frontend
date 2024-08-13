@@ -37,8 +37,7 @@ export default {
           </router-link>
         </div>
       </a-col>
-      <a-col :span="12">
-      </a-col>
+      <a-col :span="12"> </a-col>
       <a-col>
         <div class="user">
           <router-link :to="{ name: 'Home', params: { mode: 'user' } }">

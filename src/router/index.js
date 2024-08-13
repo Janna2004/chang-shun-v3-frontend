@@ -15,7 +15,7 @@ const routes = [
   // 主功能区
   {
     path: "/",
-    redirect: "/home/solid",
+    redirect: "/home/soil",
   },
   {
     path: "/home/:mode?",
@@ -26,24 +26,6 @@ const routes = [
     path: "/about",
     name: "About",
     component: () => import("@/views/AboutPage.vue"),
-  },
-  // 登录
-  {
-    path: "/login",
-    name: "Login",
-    component: () => import("@/views/user/LoginPage.vue"),
-    meta: {
-      pass: [userRole.UNREGISTERED],
-    },
-  },
-  // 用户信息
-  {
-    path: "/user",
-    name: "UserInfo",
-    component: () => import("@/views/user/UserInfo.vue"),
-    meta: {
-      pass: [userRole.CUSTOMER, userRole.ADMIN, userRole.SUPER_ADMIN],
-    },
   },
   // 工具
   {
