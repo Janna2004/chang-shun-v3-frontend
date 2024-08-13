@@ -427,7 +427,7 @@ export default {
                           "
                           @click="userLogin"
                         >
-                          登 录 ->
+                          登 录
                         </button>
                       </div>
                       <div
@@ -695,6 +695,10 @@ p {
 /*输入框*/
 div.input {
   padding-left: 5vw;
+
+  p {
+    font-size: 1.2em;
+  }
 }
 input {
   width: 75%;
