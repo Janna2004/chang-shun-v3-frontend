@@ -3,6 +3,7 @@ import PageWithMenu from "@/components/global/PageWithMenu.vue";
 import solidIcon from "@/assets/icons/土壤监测设备 1.png";
 import dayjs from "dayjs";
 import { message } from "ant-design-vue";
+import axios from "axios";
 
 export default {
   name: "AlertInfo",
@@ -56,19 +57,11 @@ export default {
         },
       ],
       detectInfoId: null,
+      isDetecting: false,
       imgUrl: "",
       // 弹出框
       isModalVisible: false,
-      detectResult: {
-        state: 1,
-        time: "2021-09-01T00:00:00Z",
-        conf: 0.9284387428,
-        content:
-          "患病现象：细菌性叶枯病初期叶片出现长条形、水浸状的病斑,呈灰绿色。病斑不断扩大,最终导致整个叶片枯萎。严重时,可导致稻穗不发育或者死亡。控制措施: 合理施肥,避免氮肥过量。及时清理田间作物残渣。适当防治,如喷洒杀菌剂。",
-        image: "",
-        detect_info_id: 22,
-        type: "烟粉虱",
-      },
+      detectResult: null,
     };
   },
   methods: {
@@ -125,10 +118,11 @@ export default {
     uploadImg(file) {
       this.imgUrl = URL.createObjectURL(file);
       this.curStep = 1;
+      this.isDetecting = true;
       const formData = new FormData();
-      formData.append("image", this.imgFile);
-      this.$axios
-        .post("/ai/detect", formData, {
+      formData.append("image", file);
+      axios
+        .post("/chang-shun/ai/detect", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
@@ -147,15 +141,18 @@ export default {
           setTimeout(() => {
             this.refreshImg();
           }, 1000);
+        })
+        .finally(() => {
+          this.isDetecting = false;
         });
     },
     // 创建预警
-    createAlert(detectInfoId) {
+    createAlert() {
       this.$axios
         .post("/ai/alert", {
           handled: false,
           alert_time: new Date(Date.now()).toISOString(),
-          detect_info_id: detectInfoId,
+          detect_info_id: this.detectInfoId,
         })
         .then((res) => {
           message.success("已提交预警");
@@ -279,7 +276,8 @@ export default {
                           <template v-if="detectResult.state == 1">
                             <p>
                               <span style="color: red; font-size: 1.5em">{{
-                                Number(detectResult.conf * 100).toFixed(2) + "%"
+                                Math.floor(detectResult.conf * 10000) / 100 +
+                                "%"
                               }}</span>
                               的概率存在病虫害风险
                             </p>
@@ -306,9 +304,14 @@ export default {
                         </div>
                       </a-col>
                       <a-col span="12">
-                        <div class="dark card text button">记录并完成</div>
+                        <div class="dark card text button" @click="createAlert">
+                          记录并完成
+                        </div>
                       </a-col>
                     </a-row>
+                  </div>
+                  <div v-else-if="isDetecting" class="place-holder">
+                    识别中...<br />请耐心等待
                   </div>
                   <div v-else class="place-holder">
                     暂无识别结果<br />请上传图片进行识别
