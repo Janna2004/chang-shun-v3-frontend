@@ -22,28 +22,32 @@ export default {
 
 <template>
   <body>
-    <a-row style="background-color: #c8ecc9">
-      <a-col :span="2">
+    <div class="container" style="background-color: #c8ecc9">
+      <div>
         <div class="logo">
           <router-link :to="{ name: 'Home' }">
-            <img alt src="@/assets/footimg1.png" style="height: 4vw" />
+            <img alt src="@/assets/footimg1.png" style="height: 10vh" />
           </router-link>
         </div>
-      </a-col>
-      <a-col :span="7">
+      </div>
+      <div>
         <div class="word">
-          <router-link :to="{ name: 'Home' }">
+          <router-link :to="{ name: 'Home' }" style="text-decoration: none;">
             <p id="topic">长顺县智慧农业监测台</p>
           </router-link>
         </div>
-      </a-col>
-      <a-col :span="12"> </a-col>
-      <a-col>
+      </div>
+      
+     
+       
+      
+      
+      <div>
         <div class="user">
-          <router-link :to="{ name: 'Home', params: { mode: 'user' } }">
+          <router-link :to="{ name: 'Home', params: { mode: 'user' } }" style="text-decoration: none;">
             <a-avatar
               shape="square"
-              :size="40"
+              :size="35"
               :style="{
                 backgroundColor: isLogin
                   ? userInfo.role === 'admin'
@@ -62,12 +66,29 @@ export default {
             >
           </router-link>
         </div>
-      </a-col>
-    </a-row>
+      </div>
+    </div>
   </body>
 </template>
 
 <style scoped>
+.container {
+            display: flex;
+            align-items: center;  /* 垂直居中 */
+            justify-content: left;
+            height: 11vh;  /* 设置容器高度 */
+            
+        }
+
+div.word{
+  margin-left: 2vw;
+  position: relative;
+  top:2.4vh;
+  text-decoration: none;
+  
+}
+
+
 .logo {
   float: left;
   width: 100%;
@@ -76,70 +97,34 @@ export default {
   justify-content: center;
   padding-top: 0%;
   height: 100%;
+  margin-left: 1vw;
 }
 
-menu li#home {
-  color: black;
 
-  position: relative;
-  top: -0.2vw;
-  left: 2vw;
-
-  list-style: none;
-
-  font-size: 1.4rem;
-
-  display: inline;
-  text-align: center;
-}
-
-menu li#home::before {
-  content: "";
-  display: inline-block;
-  background: url("@/assets/Home.png");
-  background-size: cover;
-  width: 2vw;
-  height: 2vw;
-  position: relative;
-  top: 0.4vw;
-}
-
-menu li#about {
-  color: black;
-
-  position: relative;
-  top: -0.2vw;
-  left: 9vw;
-
-  list-style: none;
-
-  font-size: 1.4rem;
-
-  display: inline;
-  text-align: center;
-}
-
-menu li#about::before {
-  content: "";
-  display: inline-block;
-  background: url("@/assets/Compass.png");
-  background-size: cover;
-  width: 1.9vw;
-  height: 1.9vw;
-  position: relative;
-  top: 0.4vw;
-  right: 0.1vh;
-}
 
 #topic {
   color: black;
-  font-size: 1.9rem;
+  font-size: 2.2rem;
   font-family: "等线";
-  position: relative;
-  top: 1.2vw;
+
+  width: 100%;
+  display: flex;
+ ;
+  text-decoration: none !important;
+  text-underline-offset: none;
+
 }
 
 .user {
-  padding-top: 13%;
+  margin-right: 0vw;
+  position: relative;
+  justify-content: right;
+  margin-left: 60vw;
+ 
+ 
+}
+
+span{
+  text-decoration: none;
 }
 </style>

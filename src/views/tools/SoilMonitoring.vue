@@ -4,7 +4,13 @@ import dayjs from "dayjs";
 import { message } from "ant-design-vue";
 import * as echarts from "echarts";
 import PageWithMenu from "../../components/global/PageWithMenu.vue";
-import solidIcon from "@/assets/icons/土壤监测设备 1.png";
+import S1 from "@/assets/icons/S1.png";
+import S2 from "@/assets/icons/S2.png";
+import S3 from "@/assets/icons/S3.png";
+import S4 from "@/assets/icons/S4.png";
+import S5 from "@/assets/icons/S5.png";
+import S6 from "@/assets/icons/S6.png";
+import S7 from "@/assets/icons/S7.png";
 import { markRaw } from "vue";
 
 export default {
@@ -22,13 +28,13 @@ export default {
 
       selectedItems: [], // 所有被选中的项目
       menuOpts: [
-        { iconUrl: solidIcon, name: "温度(℃)", value: "temperature" },
-        { iconUrl: solidIcon, name: "湿度(%)", value: "humidity" },
-        { iconUrl: solidIcon, name: "pH值(pH)", value: "ph" },
-        { iconUrl: solidIcon, name: "电导率(us/cm)", value: "conductivity" },
-        { iconUrl: solidIcon, name: "氮含量(mg/kg)", value: "nitrogen" },
-        { iconUrl: solidIcon, name: "磷含量(mg/kg)", value: "phosphorus" },
-        { iconUrl: solidIcon, name: "钾含量(mg/kg)", value: "potassium" },
+        { iconUrl: S1, name: "温度(℃)", value: "temperature" },
+        { iconUrl: S2, name: "湿度(%)", value: "humidity" },
+        { iconUrl: S3, name: "pH值(pH)", value: "ph" },
+        { iconUrl: S4, name: "电导率(us/cm)", value: "conductivity" },
+        { iconUrl: S5, name: "氮含量(mg/kg)", value: "nitrogen" },
+        { iconUrl: S6, name: "磷含量(mg/kg)", value: "phosphorus" },
+        { iconUrl: S7, name: "钾含量(mg/kg)", value: "potassium" },
       ],
 
       chartInstance: null,

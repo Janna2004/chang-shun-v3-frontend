@@ -1,6 +1,7 @@
 <script>
 import PageWithMenu from "@/components/global/PageWithMenu.vue";
-import solidIcon from "@/assets/icons/土壤监测设备 1.png";
+import W1 from "@/assets/icons/W1.png";
+import W2 from "@/assets/icons/W2.png";
 import dayjs from "dayjs";
 import { message } from "ant-design-vue";
 import axios from "axios";
@@ -26,12 +27,12 @@ export default {
       loading: false,
       menuOpts: [
         {
-          iconUrl: solidIcon,
+          iconUrl: W1,
           name: "智能识别",
           value: "detection",
         },
         {
-          iconUrl: solidIcon,
+          iconUrl: W2,
           name: "历史记录",
           value: "history",
         },

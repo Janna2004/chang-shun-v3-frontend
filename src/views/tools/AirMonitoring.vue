@@ -4,7 +4,9 @@ import dayjs from "dayjs";
 import { message } from "ant-design-vue";
 import * as echarts from "echarts";
 import PageWithMenu from "../../components/global/PageWithMenu.vue";
-import solidIcon from "@/assets/icons/土壤监测设备 1.png";
+import A1 from "@/assets/icons/A1.png";
+import A2 from "@/assets/icons/A2.png";
+import A3 from "@/assets/icons/A3.png";
 import { markRaw } from "vue";
 
 export default {
@@ -21,9 +23,9 @@ export default {
 
       selectedItems: [], // 所有被选中的项目
       menuOpts: [
-        { iconUrl: solidIcon, name: "温度", value: "temperature" },
-        { iconUrl: solidIcon, name: "湿度", value: "humidity" },
-        { iconUrl: solidIcon, name: "二氧化碳浓度", value: "co2concentration" },
+        { iconUrl: A1, name: "温度", value: "temperature" },
+        { iconUrl: A2, name: "湿度", value: "humidity" },
+        { iconUrl: A3, name: "二氧化碳浓度", value: "co2concentration" },
       ],
     };
   },

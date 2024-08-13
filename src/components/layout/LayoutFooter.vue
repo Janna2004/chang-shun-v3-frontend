@@ -17,11 +17,11 @@ export default {
           <a href="https://www.gzcsx.gov.cn/" target="_blank">长顺县人民政府</a>
         </div>
       </div>
-      <div style="margin-left: 100px">
+      <div style="margin-left: 5vw">
         <img alt src="@/assets/footimg1.png" />
-        <span style="font-size: 1.1em">贵州省 长顺县</span>
+        <span style="font-size: 1.1rem">贵州省 长顺县</span>
       </div>
-      <div style="margin-left: 200px">
+      <div style="margin-left: 8vw">
         <a href="https://www.bupt.edu.cn" target="_blank">
           <img alt src="@/assets/footlogo.png" />
         </a>
@@ -29,7 +29,7 @@ export default {
     </div>
     <div class="copyright">
       ChangShun @2024 Created by BUPT-SCS-BluePrint
-      <span style="color: #10411f; margin-left: 30px">备案号：</span>
+      <span style="color: #10411f; margin-left: 3vw">备案号：</span>
       <a
         href="https://beian.miit.gov.cn/#/Integrated/index"
         style="color: #10411f"
@@ -71,7 +71,7 @@ export default {
   text-align: center;
   font-size: 1.1rem;
   position: relative;
-  border-top: solid 1px #10411f;
+  border-top: solid 0.1vh #10411f;
   padding-top: 1vw;
   padding-bottom: 1vw;
 }

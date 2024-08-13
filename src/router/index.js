@@ -27,14 +27,6 @@ const routes = [
     name: "About",
     component: () => import("@/views/AboutPage.vue"),
   },
-<<<<<<< HEAD
-  // 登录
-
-  // 用户信息
-
-  
-=======
->>>>>>> 8bf64a2adb779d3987f4f99c04653c36ac8fe9d4
   // 工具
   {
     path: "/soil-monitoring",
