@@ -28,23 +28,10 @@ const routes = [
     component: () => import("@/views/AboutPage.vue"),
   },
   // 登录
-  {
-    path: "/login",
-    name: "Login",
-    component: () => import("@/views/user/LoginPage.vue"),
-    meta: {
-      pass: [userRole.UNREGISTERED],
-    },
-  },
+
   // 用户信息
-  {
-    path: "/user",
-    name: "UserInfo",
-    component: () => import("@/views/user/UserInfo.vue"),
-    meta: {
-      pass: [userRole.CUSTOMER, userRole.ADMIN, userRole.SUPER_ADMIN],
-    },
-  },
+
+  
   // 工具
   {
     path: "/soil-monitoring",
