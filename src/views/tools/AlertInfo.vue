@@ -2,6 +2,7 @@
 import PageWithMenu from "@/components/global/PageWithMenu.vue";
 import solidIcon from "@/assets/icons/土壤监测设备 1.png";
 import dayjs from "dayjs";
+import { message } from "ant-design-vue";
 
 export default {
   name: "AlertInfo",
@@ -9,7 +10,7 @@ export default {
   inject: ["$axios"],
   data() {
     return {
-      //目录
+      // 目录
       activeKey: [],
       alertInfo: [],
       filter: {
@@ -22,7 +23,6 @@ export default {
         },
       },
       loading: false,
-
       menuOpts: [
         {
           iconUrl: solidIcon,
@@ -36,7 +36,7 @@ export default {
         },
       ],
       selected: "detection", // 用于跟踪当前显示的模块
-      //智能识别相关
+      // 智能识别相关
       curStep: 0,
       steps: [
         {
@@ -55,11 +55,20 @@ export default {
           title: "用户确认",
         },
       ],
-
+      detectInfoId: null,
       imgUrl: "",
-
       // 弹出框
-      isModalVisible: false
+      isModalVisible: false,
+      detectResult: {
+        state: 1,
+        time: "2021-09-01T00:00:00Z",
+        conf: 0.9284387428,
+        content:
+          "患病现象：细菌性叶枯病初期叶片出现长条形、水浸状的病斑,呈灰绿色。病斑不断扩大,最终导致整个叶片枯萎。严重时,可导致稻穗不发育或者死亡。控制措施: 合理施肥,避免氮肥过量。及时清理田间作物残渣。适当防治,如喷洒杀菌剂。",
+        image: "",
+        detect_info_id: 22,
+        type: "烟粉虱",
+      },
     };
   },
   methods: {
@@ -89,7 +98,7 @@ export default {
     },
     async handleToggleProcessed(record) {
       try {
-        const response = await this.$axios.put('/ai/alert', {
+        const response = await this.$axios.put("/ai/alert", {
           id: record.id,
           handled: !record.handled,
         });
@@ -97,18 +106,65 @@ export default {
         if (response.data.code === 200) {
           // Update the local state
           record.handled = !record.handled;
-          message.success(`状态已更新为${record.handled ? "已处理" : "未处理"}`);
+          message.success(
+            `状态已更新为${record.handled ? "已处理" : "未处理"}`,
+          );
         } else {
-          message.error('处理失败，请重试');
+          message.error("处理失败，请重试");
         }
       } catch (error) {
-        message.error('处理失败，请检查网络');
+        message.error("处理失败，请检查网络");
       }
+    },
+    refreshImg() {
+      this.imgUrl = "";
+      this.curStep = 0;
+      this.detectResult = null;
     },
     // 智能识别
     uploadImg(file) {
       this.imgUrl = URL.createObjectURL(file);
       this.curStep = 1;
+      const formData = new FormData();
+      formData.append("image", this.imgFile);
+      this.$axios
+        .post("/ai/detect", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then((res) => {
+          this.detectResult = res.data;
+          if (res.data.state === 1) {
+            this.imgUrl = "data:image/jpeg;base64," + res.data.image;
+            this.detectInfoId = res.data.detect_info_id;
+          }
+          this.curStep = 3;
+        })
+        .catch((error) => {
+          message.error("上传失败，请重试");
+          console.log("上传失败:", error);
+          setTimeout(() => {
+            this.refreshImg();
+          }, 1000);
+        });
+    },
+    // 创建预警
+    createAlert(detectInfoId) {
+      this.$axios
+        .post("/ai/alert", {
+          handled: false,
+          alert_time: new Date(Date.now()).toISOString(),
+          detect_info_id: detectInfoId,
+        })
+        .then((res) => {
+          message.success("已提交预警");
+          this.refreshImg();
+        })
+        .catch((error) => {
+          message.error("提交预警失败，请重试");
+          console.log("创建预警失败:", error);
+        });
     },
     // 弹出框
     showDetails(record) {
@@ -118,30 +174,11 @@ export default {
       // Show the modal
       this.isModalVisible = true;
     },
-
     handleCancel() {
       // Hide the modal and reset selectedAlert
       this.isModalVisible = false;
       this.selectedAlert = {};
     },
-
-    async handleToggleProcessed(record) {
-      try {
-        const response = await this.$axios.put('/ai/alert', {
-          id: record.id,
-          handled: !record.handled,
-        });
-
-        if (response.data.code === 200) {
-          // Update the local state
-          record.handled = !record.handled;
-        } else {
-          message.error('处理失败，请重试');
-        }
-      } catch (error) {
-        message.error('处理失败，请检查网络');
-      }
-    }
   },
   computed: {
     // 将筛选条件转换为json格式
@@ -167,201 +204,230 @@ export default {
 <template>
   <a-config-provider
     :theme="{
-        token: {
-          colorPrimary: '#69a67c',
-        },
-
-      }"
+      token: {
+        colorPrimary: '#69a67c',
+      },
+    }"
   >
-  <PageWithMenu
-    :isHome="false"
-    :options="menuOpts"
-    :multiple="false"
-    v-model:selected="selected"
-  >
-    <template #content>
-      <template v-if="selected === 'detection'">
-        <div class="content">
-          <a-row>
-            <a-col id="procedure" span="24">
-              <div class="light card">
-                <div class="light-title">识别流程</div>
-                <div class="process">
-                  <template v-for="(step, index) in steps" :key="index">
-                    <div v-if="index > 0" class="divider">
-                      <div
-                        :class="curStep >= index ? 'color-dark' : 'color-light'"
-                      ></div>
-                    </div>
-                    <div class="step">
-                      <span
-                        :class="
-                          'circle ' +
-                          (curStep >= index ? 'color-dark' : 'color-light')
-                        "
-                        @click="curStep = index"
-                      >
-                        {{ index + 1 }}
-                      </span>
-                      <span
-                        :class="curStep >= index ? 'color-dark' : 'color-light'"
-                      >
-                        {{ step.title }}
-                      </span>
-                    </div>
-                  </template>
-                </div>
-              </div>
-            </a-col>
-          </a-row>
-          <a-row :gutter="16">
-            <a-col id="img" span="16">
-              <div class="dark card">
-                <div class="img-container">
-                  <img v-if="imgUrl != ''" :src="imgUrl" alt="水稻图片" />
-                  <div v-else class="upload">
-                    <img src="@/assets/icons/照相 1.png" alt="上传图片" />
-                    <div>点击上传图片</div>
-                    <input
-                      type="file"
-                      @change="uploadImg($event.target.files[0])"
-                    />
+    <PageWithMenu
+      :isHome="false"
+      :options="menuOpts"
+      :multiple="false"
+      v-model:selected="selected"
+    >
+      <template #content>
+        <template v-if="selected === 'detection'">
+          <div class="content">
+            <a-row>
+              <a-col id="procedure" span="24">
+                <div class="light card">
+                  <div class="light-title">识别流程</div>
+                  <div class="process">
+                    <template v-for="(step, index) in steps" :key="index">
+                      <div v-if="index > 0" class="divider">
+                        <div
+                          :class="
+                            curStep >= index ? 'color-dark' : 'color-light'
+                          "
+                        ></div>
+                      </div>
+                      <div class="step">
+                        <span
+                          :class="
+                            'circle ' +
+                            (curStep >= index ? 'color-dark' : 'color-light')
+                          "
+                        >
+                          {{ index + 1 }}
+                        </span>
+                        <span
+                          :class="
+                            curStep >= index ? 'color-dark' : 'color-light'
+                          "
+                        >
+                          {{ step.title }}
+                        </span>
+                      </div>
+                    </template>
                   </div>
                 </div>
-              </div>
-            </a-col>
-            <a-col id="result" span="8">
-              <div class="light card">
-                <div class="light-title">识别结果</div>
-                <div class="result-text">
-                  <a-row>
-                    <a-col span="24">
-                      <div class="medium card text">
-                        存在病虫害风险。病虫害类型:
-                        烟粉虱。成、若虫刺吸植物汁液，受害叶褪绿萎蔫或枯死，使植物生理紊乱，植株瘦小;并能传播病毒病，诱发煤污病
-                      </div>
-                    </a-col>
-                  </a-row>
-                  <a-row :gutter="16">
-                    <a-col span="12">
-                      <div
-                        class="medium card text button"
-                        @click="
-                          curStep = 0;
-                          imgUrl = '';
-                        "
-                      >
-                        重新识别
-                      </div>
-                    </a-col>
-                    <a-col span="12">
-                      <div class="dark card text button">记录并完成</div>
-                    </a-col>
-                  </a-row>
+              </a-col>
+            </a-row>
+            <a-row :gutter="16">
+              <a-col id="img" span="16">
+                <div class="dark card bottom-card">
+                  <div class="img-container">
+                    <img v-if="imgUrl != ''" :src="imgUrl" alt="水稻图片" />
+                    <div v-else class="upload">
+                      <img src="@/assets/icons/照相 1.png" alt="上传图片" />
+                      <div>点击上传图片</div>
+                      <input
+                        type="file"
+                        @change="uploadImg($event.target.files[0])"
+                      />
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </a-col>
-          </a-row>
-        </div>
-      </template>
-      
-      <template v-else-if="selected === 'history'">
-        <div class="filter" :bordered="false" title="筛选条件">
-          <a-space direction="vertical" size="middle">
-            <a-row>
-              <div style="display: flex; align-items: center; font-size: 1.2em">
-                是否已处理：
-              </div>
-              <a-radio-group v-model:value="filter.handled" button-style="solid">
-                <a-radio-button :value="0">未处理</a-radio-button>
-                <a-radio-button :value="1">已处理</a-radio-button>
-                <a-radio-button :value="2">全部</a-radio-button>
-              </a-radio-group>
+              </a-col>
+              <a-col id="result" span="8">
+                <div class="light card bottom-card">
+                  <div class="light-title">识别结果</div>
+                  <div v-if="detectResult" class="result-text">
+                    <a-row>
+                      <a-col span="24">
+                        <div class="medium card text">
+                          <template v-if="detectResult.state == 1">
+                            <p>
+                              <span style="color: red; font-size: 1.5em">{{
+                                Number(detectResult.conf * 100).toFixed(2) + "%"
+                              }}</span>
+                              的概率存在病虫害风险
+                            </p>
+                            <p style="text-align: left">
+                              病虫害类型：{{ detectResult.type }}
+                            </p>
+                            <p style="text-align: left">
+                              {{ detectResult.content }}
+                            </p>
+                          </template>
+                          <span v-else style="font-size: 1.2em">
+                            未检测到病虫害风险
+                          </span>
+                        </div>
+                      </a-col>
+                    </a-row>
+                    <a-row :gutter="16">
+                      <a-col span="12">
+                        <div
+                          class="medium card text button"
+                          @click="refreshImg"
+                        >
+                          重新识别
+                        </div>
+                      </a-col>
+                      <a-col span="12">
+                        <div class="dark card text button">记录并完成</div>
+                      </a-col>
+                    </a-row>
+                  </div>
+                  <div v-else class="place-holder">
+                    暂无识别结果<br />请上传图片进行识别
+                  </div>
+                </div>
+              </a-col>
             </a-row>
-            <a-row>
-              <a-checkbox
-                v-model:checked="filter.checker.time"
-                style="display: flex; align-items: center; font-size: 1.2em"
-                >时间范围：</a-checkbox
-              >
-              <a-range-picker
-                v-model:value="filter.time"
-                show-time
-                style="margin-right: 10px"
-                :disabled="!filter.checker.time"
-              />
-            </a-row>
-            <a-row>
-              <a-checkbox
-                v-model:checked="filter.checker.pest_name"
-                style="display: flex; align-items: center; font-size: 1.2em"
-                >病虫害名称：</a-checkbox
-              >
-              <a-dropdown :disabled="!filter.checker.pest_name">
-                <a @click.prevent style="font-size: 1.2em; margin-right: 30px">
-                  {{
-                    filter.pest_name === ""
-                      ? "选择病虫害类型"
-                      : `已选中${filter.pest_name}`
-                  }}
-                  <DownOutlined />
-                </a>
-                <template #overlay>
-                  <a-menu>
-                    <a-menu-item @click="filter.pest_name = '原神'">
-                      <span>原神</span>
-                    </a-menu-item>
-                    <a-menu-item @click="filter.pest_name = '一级病虫害'">
-                      <span>一级病虫害</span>
-                    </a-menu-item>
-                  </a-menu>
-                </template>
-              </a-dropdown>
-            </a-row>
-            <a-row>
-              <a-button type="primary" @click="getAlertInfo">查询</a-button>
-              <a-spin :spinning="loading" />
-            </a-row>
-          </a-space>
-
-          <div class="table-container">
-            <table class="custom-table">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>病虫害名称</th>
-                  <th>预警时间</th>
-                  <th>预警地点</th>
-                  <th>农田编号</th>
-                  <th>操作</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="item in alertInfo" :key="item.id">
-                  <td>{{ item.id }}</td>
-                  <td>{{ item.pest_name }}</td>
-                  <td>{{ dayjs(item.alert_time).format("YYYY-MM-DD HH:mm:ss") }}</td>
-                  <td>经纬度({{ item.latitude }}°, {{ item.longitude }}°)</td>
-                  <td>{{ item.field_id }}</td>
-                  <td>
-                    <button @click="showDetails(item)">详细</button>
-                    <button @click="handleToggleProcessed(item)">
-                      {{ item.handled ? "已处理" : "处理" }}
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
           </div>
-        </div>
+        </template>
 
-        
+        <template v-else-if="selected === 'history'">
+          <div class="filter" :bordered="false" title="筛选条件">
+            <a-space direction="vertical" size="middle">
+              <a-row>
+                <div
+                  style="display: flex; align-items: center; font-size: 1.2em"
+                >
+                  是否已处理：
+                </div>
+                <a-radio-group
+                  v-model:value="filter.handled"
+                  button-style="solid"
+                >
+                  <a-radio-button :value="0">未处理</a-radio-button>
+                  <a-radio-button :value="1">已处理</a-radio-button>
+                  <a-radio-button :value="2">全部</a-radio-button>
+                </a-radio-group>
+              </a-row>
+              <a-row>
+                <a-checkbox
+                  v-model:checked="filter.checker.time"
+                  style="display: flex; align-items: center; font-size: 1.2em"
+                  >时间范围：</a-checkbox
+                >
+                <a-range-picker
+                  v-model:value="filter.time"
+                  show-time
+                  style="margin-right: 10px"
+                  :disabled="!filter.checker.time"
+                />
+              </a-row>
+              <a-row>
+                <a-checkbox
+                  v-model:checked="filter.checker.pest_name"
+                  style="display: flex; align-items: center; font-size: 1.2em"
+                  >病虫害名称：</a-checkbox
+                >
+                <a-dropdown :disabled="!filter.checker.pest_name">
+                  <a
+                    @click.prevent
+                    style="font-size: 1.2em; margin-right: 30px"
+                  >
+                    {{
+                      filter.pest_name === ""
+                        ? "选择病虫害类型"
+                        : `已选中${filter.pest_name}`
+                    }}
+                    <DownOutlined />
+                  </a>
+                  <template #overlay>
+                    <a-menu>
+                      <a-menu-item @click="filter.pest_name = '原神'">
+                        <span>原神</span>
+                      </a-menu-item>
+                      <a-menu-item @click="filter.pest_name = '一级病虫害'">
+                        <span>一级病虫害</span>
+                      </a-menu-item>
+                    </a-menu>
+                  </template>
+                </a-dropdown>
+              </a-row>
+              <a-row>
+                <a-button type="primary" @click="getAlertInfo">查询</a-button>
+                <a-spin :spinning="loading" />
+              </a-row>
+            </a-space>
+
+            <div class="table-container">
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>病虫害名称</th>
+                    <th>预警时间</th>
+                    <th>预警地点</th>
+                    <th>农田编号</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="item in alertInfo" :key="item.id">
+                    <td>{{ item.id }}</td>
+                    <td>{{ item.pest_name }}</td>
+                    <td>
+                      {{ dayjs(item.alert_time).format("YYYY-MM-DD HH:mm:ss") }}
+                    </td>
+                    <td>经纬度({{ item.latitude }}°, {{ item.longitude }}°)</td>
+                    <td>{{ item.field_id }}</td>
+                    <td>
+                      <button @click="showDetails(item)">详细</button>
+                      <button @click="handleToggleProcessed(item)">
+                        {{ item.handled ? "已处理" : "处理" }}
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </template>
       </template>
-    </template>
-  </PageWithMenu>
+    </PageWithMenu>
 
-    <!-- 详细信息弹出框 --> 
-    <div v-if="isModalVisible" class="custom-modal-overlay" @click="handleCancel">
+    <!-- 详细信息弹出框 -->
+    <div
+      v-if="isModalVisible"
+      class="custom-modal-overlay"
+      @click="handleCancel"
+    >
       <div class="custom-modal" @click.stop>
         <div class="custom-modal-header">
           <h3>详细信息</h3>
@@ -369,20 +435,22 @@ export default {
         </div>
         <div class="custom-modal-body">
           <div class="custom-descriptions-item">
-              <strong>详细信息:</strong> {{ selectedAlert.pest_description }}
-            </div>
+            <strong>详细信息:</strong> {{ selectedAlert.pest_description }}
+          </div>
           <div class="custom-descriptions">
-            
             <div class="custom-descriptions-item">
               <strong>病虫害类别:</strong> {{ selectedAlert.pest_name }}
             </div>
             <div class="custom-descriptions-item">
               <strong>预警时间:</strong>
-              {{ dayjs(selectedAlert.alert_time).format("YYYY-MM-DD HH:mm:ss") }}
+              {{
+                dayjs(selectedAlert.alert_time).format("YYYY-MM-DD HH:mm:ss")
+              }}
             </div>
             <div class="custom-descriptions-item">
               <strong>预警地点:</strong>
-              经纬度({{ selectedAlert.latitude }}°, {{ selectedAlert.longitude }}°)
+              经纬度({{ selectedAlert.latitude }}°,
+              {{ selectedAlert.longitude }}°)
             </div>
             <div class="custom-descriptions-item">
               <strong>预警概率:</strong> {{ selectedAlert.pest_probability }}
@@ -416,11 +484,11 @@ export default {
   </a-config-provider>
 </template>
 
-<style  scoped>
+<style scoped>
 /* 历史记录 */
 
 .filter {
-  border:solid  #69a67c;
+  border: solid #69a67c;
   border-width: vw;
   background-color: #c8ecc9;
   border-radius: 1vw;
@@ -446,7 +514,7 @@ export default {
 }
 
 /* 弹窗 */
-div h3{
+div h3 {
   color: white;
   font-size: 1.5rem;
 }
@@ -490,7 +558,6 @@ div h3{
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 0vw;
-  
 }
 
 .custom-descriptions-item {
@@ -499,7 +566,7 @@ div h3{
   border-radius: 1vw;
   background-color: #ffffff;
   font-size: 1.4rem;
-  margin:0.5vh 0.5vw;
+  margin: 0.5vh 0.5vw;
 }
 
 .custom-image-gallery {
@@ -642,8 +709,23 @@ div h3{
   }
 }
 
+.bottom-card {
+  height: 100%;
+}
+
 .result-text {
   margin: 1em 1em 0;
+}
+
+.place-holder {
+  height: 90%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-size: 1.5em;
+  color: #69a67c;
 }
 
 .button {
@@ -664,7 +746,6 @@ div h3{
   border-collapse: collapse;
   margin-bottom: 1em;
   margin-top: 1.5em;
-
 }
 
 .custom-table th,
@@ -672,15 +753,12 @@ div h3{
   border: 1px solid #69a67c;
   padding: 8px;
   text-align: left;
- 
 }
 
 .custom-table th {
   background-color: #69a67c;
   color: white;
-  
 }
-
 
 .custom-table tr {
   background-color: #f2f2f2;
@@ -697,7 +775,7 @@ div h3{
   padding: 5px 10px;
   cursor: pointer;
   border-radius: 0.5vw;
-  gap:1vw;
+  gap: 1vw;
 }
 
 .custom-table button:hover {
