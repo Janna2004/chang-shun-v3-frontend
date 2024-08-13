@@ -170,6 +170,7 @@ export default {
         token: {
           colorPrimary: '#69a67c',
         },
+
       }"
   >
   <PageWithMenu
@@ -322,73 +323,102 @@ export default {
               <a-spin :spinning="loading" />
             </a-row>
           </a-space>
+
+          <div class="table-container">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>病虫害名称</th>
+                  <th>预警时间</th>
+                  <th>预警地点</th>
+                  <th>农田编号</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="item in alertInfo" :key="item.id">
+                  <td>{{ item.id }}</td>
+                  <td>{{ item.pest_name }}</td>
+                  <td>{{ dayjs(item.alert_time).format("YYYY-MM-DD HH:mm:ss") }}</td>
+                  <td>经纬度({{ item.latitude }}°, {{ item.longitude }}°)</td>
+                  <td>{{ item.field_id }}</td>
+                  <td>
+                    <button @click="showDetails(item)">详细</button>
+                    <button @click="handleToggleProcessed(item)">
+                      {{ item.handled ? "已处理" : "处理" }}
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
-        <div class="table-container">
-          <table class="custom-table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>病虫害名称</th>
-                <th>预警时间</th>
-                <th>预警地点</th>
-                <th>农田编号</th>
-                <th>操作</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="item in alertInfo" :key="item.id">
-                <td>{{ item.id }}</td>
-                <td>{{ item.pest_name }}</td>
-                <td>{{ dayjs(item.alert_time).format("YYYY-MM-DD HH:mm:ss") }}</td>
-                <td>经纬度({{ item.latitude }}°, {{ item.longitude }}°)</td>
-                <td>{{ item.field_id }}</td>
-                <td>
-                  <button @click="showDetails(item)">详细</button>
-                  <button @click="handleToggleProcessed(item)">
-                    {{ item.handled ? "已处理" : "处理" }}
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        
       </template>
     </template>
   </PageWithMenu>
 
-  <!-- 详细信息弹出框 --> 
-    <a-modal v-model:visible="isModalVisible" title="详细信息" @cancel="handleCancel" footer={null}>
-      <a-descriptions style="margin: auto" :column="3" bordered>
-        <a-descriptions-item label="详细信息" :span="3">{{ selectedAlert.pest_description }}</a-descriptions-item>
-        <a-descriptions-item label="病虫害类别" :span="3">{{ selectedAlert.pest_name }}</a-descriptions-item>
-        <a-descriptions-item label="预警时间">{{ dayjs(selectedAlert.alert_time).format("YYYY-MM-DD HH:mm:ss") }}</a-descriptions-item>
-        <a-descriptions-item label="预警地点">经纬度({{ selectedAlert.latitude }}°,{{
-          selectedAlert.longitude
-        }}°)</a-descriptions-item>
-        <a-descriptions-item label="预警概率">{{ selectedAlert.pest_probability }}</a-descriptions-item>
-        <a-descriptions-item label="勘测无人机编号">{{ selectedAlert.drone_id }}</a-descriptions-item>
-        <a-descriptions-item label="勘测农田编号">{{ selectedAlert.field_id }}</a-descriptions-item>
-        <a-descriptions-item label="处理状态">{{ selectedAlert.handled ? "已处理" : "未处理" }}</a-descriptions-item>
-        <a-descriptions-item label="现场图片" :span="3">
-          <div class="image">
-            <a-image-preview-group>
-              <a-image
-                :src="image"
-                :width="200"
-                v-for="(image, index) in selectedAlert.image_paths"
-                :key="index"
-              />
-            </a-image-preview-group>
+    <!-- 详细信息弹出框 --> 
+    <div v-if="isModalVisible" class="custom-modal-overlay" @click="handleCancel">
+      <div class="custom-modal" @click.stop>
+        <div class="custom-modal-header">
+          <h3>详细信息</h3>
+          <button class="custom-modal-close" @click="handleCancel">×</button>
+        </div>
+        <div class="custom-modal-body">
+          <div class="custom-descriptions-item">
+              <strong>详细信息:</strong> {{ selectedAlert.pest_description }}
+            </div>
+          <div class="custom-descriptions">
+            
+            <div class="custom-descriptions-item">
+              <strong>病虫害类别:</strong> {{ selectedAlert.pest_name }}
+            </div>
+            <div class="custom-descriptions-item">
+              <strong>预警时间:</strong>
+              {{ dayjs(selectedAlert.alert_time).format("YYYY-MM-DD HH:mm:ss") }}
+            </div>
+            <div class="custom-descriptions-item">
+              <strong>预警地点:</strong>
+              经纬度({{ selectedAlert.latitude }}°, {{ selectedAlert.longitude }}°)
+            </div>
+            <div class="custom-descriptions-item">
+              <strong>预警概率:</strong> {{ selectedAlert.pest_probability }}
+            </div>
+            <div class="custom-descriptions-item">
+              <strong>勘测无人机编号:</strong> {{ selectedAlert.drone_id }}
+            </div>
+            <div class="custom-descriptions-item">
+              <strong>勘测农田编号:</strong> {{ selectedAlert.field_id }}
+            </div>
+            <div class="custom-descriptions-item">
+              <strong>处理状态:</strong>
+              {{ selectedAlert.handled ? "已处理" : "未处理" }}
+            </div>
+            <div class="custom-descriptions-item custom-image-gallery">
+              <strong>现场图片:</strong>
+              <div class="custom-images">
+                <img
+                  v-for="(image, index) in selectedAlert.image_paths"
+                  :key="index"
+                  :src="image"
+                  class="custom-image"
+                  :alt="'Image ' + (index + 1)"
+                />
+              </div>
+            </div>
           </div>
-        </a-descriptions-item>
-      </a-descriptions>
-    </a-modal>
+        </div>
+      </div>
+    </div>
   </a-config-provider>
 </template>
 
-<style scoped>
+<style  scoped>
 /* 历史记录 */
+
 .filter {
   border:solid  #69a67c;
   border-width: vw;
@@ -413,6 +443,80 @@ export default {
   grid-column-gap: 25px;
   grid-template-columns: auto auto auto auto;
   margin-left: 20px;
+}
+
+/* 弹窗 */
+div h3{
+  color: white;
+  font-size: 1.5rem;
+}
+.custom-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.custom-modal {
+  background: rgba(105, 166, 124, 0.9);
+  padding: 1vw;
+  border-radius: 1vw;
+  width: 85%;
+  max-width: 90vw;
+  position: relative;
+}
+
+.custom-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2vh;
+}
+
+.custom-modal-close {
+  background: none;
+  border: none;
+  font-size: 1.5em;
+  cursor: pointer;
+}
+
+.custom-descriptions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0vw;
+  
+}
+
+.custom-descriptions-item {
+  padding: 1.4vw;
+  border: 0.2vw solid #558b5a;
+  border-radius: 1vw;
+  background-color: #ffffff;
+  font-size: 1.4rem;
+  margin:0.5vh 0.5vw;
+}
+
+.custom-image-gallery {
+  grid-column: span 3;
+}
+
+.custom-images {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 1vw;
+}
+
+.custom-image {
+  width: 100%;
+  height: auto;
+  border-radius: 1vw;
+  object-fit: cover;
 }
 /* 智能识别 */
 .content {
@@ -552,28 +656,33 @@ export default {
 
 /* 表格 */
 .table-container {
-  margin: 20px;
+  margin: 0px;
 }
 
 .custom-table {
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 1em;
+  margin-top: 1.5em;
+
 }
 
 .custom-table th,
 .custom-table td {
-  border: 1px solid #ccc;
+  border: 1px solid #69a67c;
   padding: 8px;
   text-align: left;
+ 
 }
 
 .custom-table th {
   background-color: #69a67c;
   color: white;
+  
 }
 
-.custom-table tr:nth-child(even) {
+
+.custom-table tr {
   background-color: #f2f2f2;
 }
 
@@ -587,6 +696,8 @@ export default {
   border: none;
   padding: 5px 10px;
   cursor: pointer;
+  border-radius: 0.5vw;
+  gap:1vw;
 }
 
 .custom-table button:hover {
