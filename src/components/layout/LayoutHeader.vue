@@ -37,8 +37,7 @@ export default {
           </router-link>
         </div>
       </a-col>
-      <a-col :span="12">
-      </a-col>
+      <a-col :span="12"> </a-col>
       <a-col>
         <div class="user">
           <router-link :to="{ name: 'Home', params: { mode: 'user' } }">
@@ -97,7 +96,7 @@ menu li#home {
 menu li#home::before {
   content: "";
   display: inline-block;
-  background: url(Home.png);
+  background: url("@/assets/Home.png");
   background-size: cover;
   width: 2vw;
   height: 2vw;
@@ -123,7 +122,7 @@ menu li#about {
 menu li#about::before {
   content: "";
   display: inline-block;
-  background: url(Compass.png);
+  background: url("@/assets/Compass.png");
   background-size: cover;
   width: 1.9vw;
   height: 1.9vw;

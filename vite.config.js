@@ -23,6 +23,14 @@ export default defineConfig({
           return path.replace(/^\/chang-shun\/api/, "/chang-shun/api");
         },
       },
+      "/chang-shun": {
+        target: "http://1.14.125.238",
+        changeOrigin: true,
+        rewrite: (path) => {
+          console.log("Proxying request:", path);
+          return path.replace(/^\/chang-shun/, "/chang-shun");
+        },
+      },
     },
   },
 });
