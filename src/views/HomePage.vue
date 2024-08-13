@@ -89,6 +89,7 @@ export default {
     };
   },
   beforeMount() {
+    this.currentModule = this.$route.params.mode || "soil";
     if (this.currentModule === "setting") {
       this.loadMarkdown();
     }
