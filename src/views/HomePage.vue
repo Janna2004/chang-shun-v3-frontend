@@ -540,7 +540,7 @@ export default {
 
 #left {
   background-color: rgba(105, 166, 124, 0.9);
-  background-image: url("css/soiltest-icon.png");
+  background-image: url("@/assets/soiltest-icon.png");
   background-position: 98% 40%;
   background-size: 33%;
   background-repeat: no-repeat;
@@ -591,7 +591,7 @@ t-left div p {
 
 #right {
   background-color: rgba(105, 166, 124, 0.9);
-  background-image: url("css/入口.png");
+  background-image: url("@/assets/入口.png");
   background-position: 95% 40%;
   background-size: 33%;
   background-repeat: no-repeat;
