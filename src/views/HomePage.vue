@@ -89,6 +89,7 @@ export default {
     };
   },
   beforeMount() {
+    this.isLoggedIn = this.$store.getters.userInfo.role !== "unregistered";
     this.currentModule = this.$route.params.mode || "soil";
     if (this.currentModule === "setting") {
       this.loadMarkdown();
@@ -152,7 +153,6 @@ export default {
         .then(() => {
           message.info("登录成功！");
           this.isLoggedIn = true;
-          this.changeModule("soil");
         })
         .catch((err) => {
           if (err.status === 401) message.error("账号不存在或密码错误！");
@@ -347,6 +347,7 @@ export default {
             <div v-if="isLoggedIn" style="height: 100%; width: 100%">
               <!-- 插入 userpage 的内容 -->
               <a-page-header
+                :back-icon="false"
                 style="
                   border-bottom: 1px solid rgb(235, 237, 240);
                   padding: 10px 20px;
@@ -355,8 +356,25 @@ export default {
                 title="用户信息"
                 @back="handleBack"
               />
-              <div style="margin: 20px 50px; display: flex">
-                <a-descriptions :column="1" style="width: 20em">
+              <div
+                style="margin: 20px 50px; display: flex; flex-direction: column"
+              >
+                <a-descriptions
+                  :column="1"
+                  style="
+                    width: 20em;
+                    padding: 1em;
+                    margin-bottom: 1em;
+                    border-radius: 1em;
+                    background-color: #f9f9f9;
+                  "
+                  :labelStyle="{
+                    fontSize: '1.5em',
+                    margin: '0 1em 0 0',
+                    fontWeight: 'bold',
+                  }"
+                  :contentStyle="{ fontSize: '1.5em' }"
+                >
                   <a-descriptions-item label="用户名">{{
                     user.username
                   }}</a-descriptions-item>
@@ -463,7 +481,7 @@ export default {
                         @search="sendCode"
                         :disabled="sendCodeInfo !== '发送验证码'"
                       />
-                      
+
                       <input
                         v-model="register.password1"
                         placeholder="输入密码"
@@ -473,17 +491,19 @@ export default {
                         placeholder="重复密码"
                         @keydown.enter="userRegister"
                       />
-                      <input
-                          v-model="register.code"
-                          placeholder="输入验证码"
-                      />
-                      <button class="down1" @click="sendCode">发送验证码</button>
+                      <input v-model="register.code" placeholder="输入验证码" />
+                      <button class="down1" @click="sendCode">
+                        发送验证码
+                      </button>
                       <div class="inline-flex">
                         <p>已有帐号？</p>
-                        <button  class="down2" type="link" @click="isRegister = false"
-                          >去登录</button
+                        <button
+                          class="down2"
+                          type="link"
+                          @click="isRegister = false"
                         >
-                        
+                          去登录
+                        </button>
                       </div>
                       <button
                         class="register"
@@ -707,9 +727,9 @@ input {
   border-radius: 0.5vw;
   border-color: #ffffff;
   background-color: #c8ecc9;
-  padding-top:0.7vh ;
-  padding-bottom:0.4vh ;
-  padding-left:0.7vh ;  
+  padding-top: 0.7vh;
+  padding-bottom: 0.4vh;
+  padding-left: 0.7vh;
 
   margin-top: -0.5vh;
   margin-bottom: 2vh;
@@ -722,8 +742,8 @@ button.login {
   border-width: 0.1vw;
   outline: none;
   border-color: #ffffff;
-  padding-top:1.2vh ;
-  padding-bottom:1.2vh ;
+  padding-top: 1.2vh;
+  padding-bottom: 1.2vh;
   margin-top: 0.5vh;
   margin-bottom: 2vh;
   color: #ffffff;
@@ -737,15 +757,14 @@ button.register {
   border-width: 0.1vw;
   outline: none;
   border-color: #ffffff;
-  padding-top:1.2vh ;
-  padding-bottom:1.2vh ;
+  padding-top: 1.2vh;
+  padding-bottom: 1.2vh;
   margin-top: -3vh;
   margin-bottom: 2vh;
   color: #ffffff;
   box-shadow: none;
-  
 }
-button.down{
+button.down {
   width: 35%;
   color: #c8ecc9;
   background-color: rgba(0, 0, 0, 0);
@@ -756,30 +775,30 @@ button.down{
   font-size: 1.6rem;
 }
 
-button.down1{
+button.down1 {
   width: 30%;
   color: #c8ecc9;
-  background-color: rgba(0,0,0,0);
-  border-color: rgba(0,0,0,0);
+  background-color: rgba(0, 0, 0, 0);
+  border-color: rgba(0, 0, 0, 0);
   text-decoration: underline;
   margin-top: -2.2vh;
   margin-bottom: 2vh;
   font-size: 1.6rem;
-}button.down2{
+}
+button.down2 {
   width: 30%;
   color: #c8ecc9;
-  background-color: rgba(0,0,0,0);
-  border-color: rgba(0,0,0,0);
+  background-color: rgba(0, 0, 0, 0);
+  border-color: rgba(0, 0, 0, 0);
   text-decoration: underline;
   margin-top: -2.2vh;
   margin-bottom: 1vh;
   font-size: 1.7rem;
 }
 
-
 .ad {
   transition: 1s;
-  
+
   height: 82vh;
 }
 

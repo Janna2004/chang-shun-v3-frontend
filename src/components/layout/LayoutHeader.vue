@@ -32,19 +32,18 @@ export default {
       </div>
       <div>
         <div class="word">
-          <router-link :to="{ name: 'Home' }" style="text-decoration: none;">
+          <router-link :to="{ name: 'Home' }" style="text-decoration: none">
             <p id="topic">长顺县智慧农业监测台</p>
           </router-link>
         </div>
       </div>
-      
-     
-       
-      
-      
+
       <div>
         <div class="user">
-          <router-link :to="{ name: 'Home', params: { mode: 'user' } }" style="text-decoration: none;">
+          <router-link
+            :to="{ name: 'Home', params: { mode: 'user' } }"
+            style="text-decoration: none"
+          >
             <a-avatar
               shape="square"
               :size="35"
@@ -73,21 +72,18 @@ export default {
 
 <style scoped>
 .container {
-            display: flex;
-            align-items: center;  /* 垂直居中 */
-            justify-content: left;
-            height: 11vh;  /* 设置容器高度 */
-            
-        }
-
-div.word{
-  margin-left: 2vw;
-  position: relative;
-  top:2.4vh;
-  text-decoration: none;
-  
+  display: flex;
+  align-items: center; /* 垂直居中 */
+  justify-content: left;
+  height: 11vh; /* 设置容器高度 */
 }
 
+div.word {
+  margin-left: 2vw;
+  position: relative;
+  top: 2.4vh;
+  text-decoration: none;
+}
 
 .logo {
   float: left;
@@ -100,8 +96,6 @@ div.word{
   margin-left: 1vw;
 }
 
-
-
 #topic {
   color: black;
   font-size: 2.2rem;
@@ -109,10 +103,8 @@ div.word{
 
   width: 100%;
   display: flex;
- ;
   text-decoration: none !important;
   text-underline-offset: none;
-
 }
 
 .user {
@@ -120,11 +112,9 @@ div.word{
   position: relative;
   justify-content: right;
   margin-left: 60vw;
- 
- 
 }
 
-span{
+span {
   text-decoration: none;
 }
 </style>

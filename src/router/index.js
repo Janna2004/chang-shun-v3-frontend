@@ -5,7 +5,7 @@ import store from "@/store";
 // 用户角色定义为未登录、游客、管理员、超级管理员
 // 权限管理方式为白名单，在路由中pass字段定义通行角色，未定义则默认全部通行
 const userRole = {
-  UNREGISTERED: "admin",
+  UNREGISTERED: "unregistered",
   CUSTOMER: "customer",
   ADMIN: "admin",
   SUPER_ADMIN: "super-admin",
@@ -78,17 +78,20 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from) => {
+  console.log("store.getters.userInfo", store.getters.userInfo);
   // 默认放行
   if (!to.meta.pass) return true;
   // 白名单放行
   if (to.meta.pass.includes(store.getters.userInfo.role)) return true;
   else if (store.getters.userInfo.role === userRole.UNREGISTERED) {
+    console.log("未登录");
     // 未登录跳转登录
     message.warn("请先登录！");
-    return "/login";
+    return "/home/user";
   } else {
+    console.log("权限不足");
     // 权限不足跳转主页
-    return true;
+    return "/home";
     // message.warn('权限不足！')
     // return '/home'
   }
