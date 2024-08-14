@@ -57,7 +57,7 @@ export default {
       this.fetch24HourData(); // 每小时更新数据
     }, 3600000); // 每3600000毫秒（1小时）更新一次
   },
-  beforeDestroy() {
+  beforeUnmount() {
     clearInterval(this.interval); // 清除定时器防止内存泄漏
   },
   watch: {
@@ -119,7 +119,7 @@ export default {
         title: {
           text: " ",
         },
-        //显示横纵坐标
+        // 显示横纵坐标
         tooltip: {
           trigger: "axis",
           formatter: function (params) {
@@ -163,7 +163,7 @@ export default {
           type: "value",
         },
         series: series,
-        //局部放大
+        // 局部放大
         dataZoom: [
           {
             // 这个dataZoom组件，默认显示为滑动条形式
@@ -263,7 +263,7 @@ export default {
       );
 
       const temperatureOption = {
-        //显示横纵坐标
+        // 显示横纵坐标
         tooltip: {
           trigger: "axis",
           formatter: function (params) {
@@ -277,7 +277,7 @@ export default {
             result += `${formattedTime}<br/>`; // 显示格式化后的时间
             params.forEach((param) => {
               if (param.data !== undefined) {
-                let formattedData = parseFloat(param.data).toFixed(4); // 格式化数据保留4位小数
+                const formattedData = parseFloat(param.data).toFixed(4); // 格式化数据保留4位小数
                 result += `${param.marker}湿度 : ${formattedData}<br/>`; // 显示每个系列的颜色标记和数据
               }
             });
@@ -519,17 +519,17 @@ export default {
               },
             },
             splitLine: {
-              //设置分隔线样式
-              show: false, //设置是否显示分隔线，默认true
+              // 设置分隔线样式
+              show: false, // 设置是否显示分隔线，默认true
             },
             axisTick: {
-              //设置刻度(线)样式
-              show: true, //设置是否显示刻度(线)，默认true
+              // 设置刻度(线)样式
+              show: true, // 设置是否显示刻度(线)，默认true
               splitNumber: 1,
             },
             axisLabel: {
-              //设置刻度标签
-              show: false, //设置是否显示标签，默认true
+              // 设置刻度标签
+              show: false, // 设置是否显示标签，默认true
             },
           },
         ],
