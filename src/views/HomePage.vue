@@ -366,7 +366,6 @@ export default {
                     padding: 1em;
                     margin-bottom: 1em;
                     border-radius: 1em;
-                    background-color: #f9f9f9;
                   "
                   :labelStyle="{
                     fontSize: '1.5em',

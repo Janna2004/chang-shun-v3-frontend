@@ -132,7 +132,7 @@ export default {
           this.detectResult = res.data;
           if (res.data.state === 1) {
             this.imgUrl = "data:image/jpeg;base64," + res.data.image;
-            this.detectInfoId = res.data.detect_info_id;
+            this.detectInfoId = res.data.detection_info_id;
           }
           this.curStep = 3;
         })
@@ -149,11 +149,18 @@ export default {
     },
     // 创建预警
     createAlert() {
+      const date = new Date();
+      const utcOffset = date.getTimezoneOffset(); // 当前时区与 UTC 的时间差（分钟）
+      const targetOffset = 8 * 60; // 目标时区与 UTC 的时间差（分钟），+8 小时
+      const localDate = new Date(date.getTime() + (targetOffset - utcOffset) * 60000);
+
+      // 格式化为 ISO 字符串，并添加 +08:00 时区标识
+      const alertTime = localDate.toISOString().replace('Z', '+08:00');
       this.$axios
         .post("/ai/alert", {
           handled: false,
-          alert_time: new Date(Date.now()).toISOString(),
-          detect_info_id: this.detectInfoId,
+          alert_time: alertTime,
+          detection_info_id: this.detectInfoId,
         })
         .then((res) => {
           message.success("已提交预警");
