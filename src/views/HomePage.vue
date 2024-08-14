@@ -300,7 +300,7 @@ export default {
                   <h1 class="topic">土壤<br />数据监控</h1>
                   <router-link to="/soil-monitoring" id="tool" exact>
                     <div id="enter">
-                      <p>点击进入</p>
+                      <span>点击进入</span>
                     </div>
                   </router-link>
                 </t-right>
@@ -310,7 +310,7 @@ export default {
                   <h1 class="topic">空气<br />数据监控</h1>
                   <router-link to="/air-monitoring" id="tool" exact>
                     <div id="enter">
-                      <p>点击进入</p>
+                      <span>点击进入</span>
                     </div>
                   </router-link>
                 </t-right>
@@ -320,7 +320,7 @@ export default {
                   <h1 class="topic">预警<br />信息监控</h1>
                   <router-link to="/alert" id="tool" exact>
                     <div id="enter">
-                      <p>点击进入</p>
+                      <span>点击进入</span>
                     </div>
                   </router-link>
                 </t-right>
@@ -330,7 +330,7 @@ export default {
                   <h1 class="topic">无人<br />拍摄监控</h1>
                   <router-link to="/UAVControl" id="tool" exact>
                     <div id="enter">
-                      <p>点击进入</p>
+                      <span>点击进入</span>
                     </div>
                   </router-link>
                 </t-right>
@@ -800,6 +800,17 @@ button.down2 {
   transition: 1s;
 
   height: 82vh;
+}
+
+#enter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  span {
+    font-size: 1.2rem;
+    color: black;
+    text-align: center;
+  }
 }
 
 .inline-flex {

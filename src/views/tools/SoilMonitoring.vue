@@ -607,106 +607,115 @@ export default {
 </script>
 
 <template>
-  <PageWithMenu
-    :isHome="false"
-    :options="menuOpts"
-    :multiple="true"
-    :selected="selectedItems"
+  <a-config-provider
+    :theme="{
+      token: {
+        colorPrimary: '#00b96b',
+        colorInfo: '#00b96b',
+      },
+    }"
   >
-    <template #content>
-      <div class="top">
-        <div class="button-group">
-          <a-dropdown>
-            <a @click.prevent style="font-size: 1.2em; margin-right: 30px">
-              {{
-                selectId === 0 ? "选择仪器编号" : `已选中${selectId}号检测器`
-              }}
-              <DownOutlined />
-            </a>
-            <template #overlay>
-              <a-menu>
-                <a-menu-item
-                  v-for="(item, index) in instrList"
-                  :key="index"
-                  @click="
-                    selectId = item.id;
-                    fetchData();
-                    fetch24HourData();
-                  "
-                >
-                  <span>
-                    {{ item.id }}号 {{ item.location }} {{ item.function }}
-                    <span v-if="item.status === '故障'" style="color: red"
-                      >（故障）</span
-                    >
-                  </span>
-                </a-menu-item>
-              </a-menu>
-            </template>
-          </a-dropdown>
-          <a-checkbox
-            style="margin-right: 10px"
-            v-model:checked="timeSelected"
-          />
-          <a-range-picker
-            v-model:value="time"
-            show-time
-            style="margin-right: 10px"
-            :disabled="!timeSelected"
-          />
+    <PageWithMenu
+      :isHome="false"
+      :options="menuOpts"
+      :multiple="true"
+      :selected="selectedItems"
+    >
+      <template #content>
+        <div class="top">
+          <div class="button-group">
+            <a-dropdown>
+              <a @click.prevent style="font-size: 1.2em; margin-right: 30px">
+                {{
+                  selectId === 0 ? "选择仪器编号" : `已选中${selectId}号检测器`
+                }}
+                <DownOutlined />
+              </a>
+              <template #overlay>
+                <a-menu>
+                  <a-menu-item
+                    v-for="(item, index) in instrList"
+                    :key="index"
+                    @click="
+                      selectId = item.id;
+                      fetchData();
+                      fetch24HourData();
+                    "
+                  >
+                    <span>
+                      {{ item.id }}号 {{ item.location }} {{ item.function }}
+                      <span v-if="item.status === '故障'" style="color: red"
+                        >（故障）</span
+                      >
+                    </span>
+                  </a-menu-item>
+                </a-menu>
+              </template>
+            </a-dropdown>
+            <a-checkbox
+              style="margin-right: 10px"
+              v-model:checked="timeSelected"
+            />
+            <a-range-picker
+              v-model:value="time"
+              show-time
+              style="margin-right: 10px"
+              :disabled="!timeSelected"
+            />
 
-          <a-button type="primary" @click="fetchData">查询</a-button>
+            <a-button type="primary" @click="fetchData">查询</a-button>
+          </div>
         </div>
-      </div>
-      <div class="main">
-        <div class="results">
-          <h3 style="color: rgb(200, 236, 201)">监控面板</h3>
-          <a-row v-if="loading" style="width: 100%">
-            <a-spin :spinning="loading" style="margin: auto" />
-          </a-row>
-          <a-row v-if="!loading" style="width: 100%">
-            <a-row v-if="!data || data.length == 0"> 暂无数据 </a-row>
-          </a-row>
-          <div ref="chartContainer" style="width: 100%; height: 400px"></div>
-        </div>
-        <div class="right-panel">
-          <div class="info-box">
-            <h3 style="color: #69a67c">温度</h3>
+        <div class="main">
+          <div class="results">
+            <h3 style="color: rgb(200, 236, 201)">监控面板</h3>
             <a-row v-if="loading" style="width: 100%">
               <a-spin :spinning="loading" style="margin: auto" />
             </a-row>
             <a-row v-if="!loading" style="width: 100%">
               <a-row v-if="!data || data.length == 0"> 暂无数据 </a-row>
             </a-row>
-            <div
-              ref="temperatureChart"
-              style="height: 110px; width: 100%"
-            ></div>
+            <div ref="chartContainer" style="width: 100%; height: 400px"></div>
           </div>
-          <div class="info-box">
-            <h3 style="color: #69a67c">湿度</h3>
-            <a-row v-if="loading" style="width: 100%">
-              <a-spin :spinning="loading" style="margin: auto" />
-            </a-row>
-            <a-row v-if="!loading" style="width: 100%">
-              <a-row v-if="!data || data.length == 0"> 暂无数据 </a-row>
-            </a-row>
-            <div ref="humidityChart" style="height: 110px; width: 100%"></div>
-          </div>
-          <div class="info-box">
-            <h3 style="color: #69a67c">Ph</h3>
-            <a-row v-if="loading" style="width: 100%">
-              <a-spin :spinning="loading" style="margin: auto" />
-            </a-row>
-            <a-row v-if="!loading" style="width: 100%">
-              <a-row v-if="!data || data.length == 0"> 暂无数据 </a-row>
-            </a-row>
-            <div ref="phChart" style="height: 110px; width: 100%"></div>
+          <div class="right-panel">
+            <div class="info-box">
+              <h3 style="color: #69a67c">温度</h3>
+              <a-row v-if="loading" style="width: 100%">
+                <a-spin :spinning="loading" style="margin: auto" />
+              </a-row>
+              <a-row v-if="!loading" style="width: 100%">
+                <a-row v-if="!data || data.length == 0"> 暂无数据 </a-row>
+              </a-row>
+              <div
+                ref="temperatureChart"
+                style="height: 110px; width: 100%"
+              ></div>
+            </div>
+            <div class="info-box">
+              <h3 style="color: #69a67c">湿度</h3>
+              <a-row v-if="loading" style="width: 100%">
+                <a-spin :spinning="loading" style="margin: auto" />
+              </a-row>
+              <a-row v-if="!loading" style="width: 100%">
+                <a-row v-if="!data || data.length == 0"> 暂无数据 </a-row>
+              </a-row>
+              <div ref="humidityChart" style="height: 110px; width: 100%"></div>
+            </div>
+            <div class="info-box">
+              <h3 style="color: #69a67c">Ph</h3>
+              <a-row v-if="loading" style="width: 100%">
+                <a-spin :spinning="loading" style="margin: auto" />
+              </a-row>
+              <a-row v-if="!loading" style="width: 100%">
+                <a-row v-if="!data || data.length == 0"> 暂无数据 </a-row>
+              </a-row>
+              <div ref="phChart" style="height: 110px; width: 100%"></div>
+            </div>
           </div>
         </div>
-      </div>
-    </template>
-  </PageWithMenu>
+      </template>
+    </PageWithMenu>
+  </a-config-provider>
 </template>
 
 <style scoped>
