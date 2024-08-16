@@ -495,7 +495,7 @@ export default {
   </a-config-provider>
 </template>
 
-<style scoped>
+<style scoped lang="less">
 /* 历史记录 */
 
 .filter {

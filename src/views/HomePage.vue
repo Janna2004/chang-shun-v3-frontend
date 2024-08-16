@@ -536,7 +536,7 @@ export default {
   </PageWithMenu>
 </template>
 
-<style scoped>
+<style scoped lang="less">
 .img {
   width: 95%;
   background-size: 100% 100%;

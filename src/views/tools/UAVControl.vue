@@ -360,7 +360,7 @@ export default {
   </PageWithMenu>
 </template>
 
-<style scoped>
+<style scoped lang="less">
 .main {
   display: flex;
   flex-direction: column;

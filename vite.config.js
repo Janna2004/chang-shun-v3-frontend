@@ -2,15 +2,18 @@ import { fileURLToPath, URL } from "node:url";
 
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
+import { join } from "node:path";
 
 export default defineConfig({
+  base: "/",
   plugins: [vue()],
   build: {
     target: "esnext",
   },
   resolve: {
     alias: {
-      "@": fileURLToPath(new URL("./src", import.meta.url)),
+      "@": join(__dirname, "src"),
+      // "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
   server: {

@@ -81,7 +81,7 @@ export default {
   </ul>
 </template>
 
-<style scoped>
+<style scoped lang="less">
 #side {
   display: flex;
   flex-direction: column;
