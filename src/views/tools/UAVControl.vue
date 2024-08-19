@@ -36,7 +36,7 @@ export default {
 
       supported,
       // 无人机服务器地址
-      host: "",
+      host: "http://192.168.137.30",
       // 录制状态
       recording: false,
       // 录制实例
@@ -206,7 +206,7 @@ export default {
     const that = this;
     // 将图片复制到canvas上
     const img = new Image();
-    img.src = `${this.host}:5000`;
+    img.src = `${this.host}:5000/video_feed`;
     img.crossOrigin = "Anonymous";
     const video = document.querySelector(".video");
     const canvas = document.getElementById("canvas-feed");
