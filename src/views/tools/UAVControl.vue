@@ -17,6 +17,7 @@ const supported = MediaRecorder.isTypeSupported("video/webm;codecs=vp9");
 export default {
   name: "UAVControl",
   components: { VideoCameraOutlined, PageWithMenu },
+  inject: ["$axios"],
   data() {
     return {
       menuOpts: [
@@ -35,7 +36,7 @@ export default {
 
       supported,
       // 无人机服务器地址
-      host: "http://conc.ddns.net:5000/",
+      host: "",
       // 录制状态
       recording: false,
       // 录制实例
@@ -196,11 +197,16 @@ export default {
       );
     },
   },
+  beforeMount() {
+    this.$axios.get("/drone/ip").then((res) => {
+      this.host = res.data.data;
+    });
+  },
   mounted() {
     const that = this;
     // 将图片复制到canvas上
     const img = new Image();
-    img.src = `${this.host}video_feed?fps=10`;
+    img.src = `${this.host}:5000`;
     img.crossOrigin = "Anonymous";
     const video = document.querySelector(".video");
     const canvas = document.getElementById("canvas-feed");

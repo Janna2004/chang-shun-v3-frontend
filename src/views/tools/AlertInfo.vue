@@ -381,11 +381,29 @@ export default {
                   </a>
                   <template #overlay>
                     <a-menu>
-                      <a-menu-item @click="filter.pest_name = '原神'">
-                        <span>原神</span>
+                      <a-menu-item @click="filter.pest_name = '细菌性叶枯病'">
+                        <span>细菌性叶枯病</span>
                       </a-menu-item>
-                      <a-menu-item @click="filter.pest_name = '一级病虫害'">
-                        <span>一级病虫害</span>
+                      <a-menu-item @click="filter.pest_name = '细菌性叶斑病'">
+                        <span>细菌性叶斑病</span>
+                      </a-menu-item>
+                      <a-menu-item @click="filter.pest_name = '稻瘟病'">
+                        <span>稻瘟病</span>
+                      </a-menu-item>
+                      <a-menu-item @click="filter.pest_name = '褐斑病'">
+                        <span>褐斑病</span>
+                      </a-menu-item>
+                      <a-menu-item @click="filter.pest_name = '心腐病'">
+                        <span>心腐病</span>
+                      </a-menu-item>
+                      <a-menu-item @click="filter.pest_name = '霜霉病'">
+                        <span>霜霉病</span>
+                      </a-menu-item>
+                      <a-menu-item @click="filter.pest_name = '褐飞虱'">
+                        <span>褐飞虱</span>
+                      </a-menu-item>
+                      <a-menu-item @click="filter.pest_name = '稻瘟病毒病'">
+                        <span>稻瘟病毒病</span>
                       </a-menu-item>
                     </a-menu>
                   </template>

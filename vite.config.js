@@ -1,5 +1,3 @@
-import { fileURLToPath, URL } from "node:url";
-
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import { join } from "node:path";
@@ -32,6 +30,14 @@ export default defineConfig({
         rewrite: (path) => {
           console.log("Proxying request:", path);
           return path.replace(/^\/chang-shun/, "/chang-shun");
+        },
+      },
+      "/drone": {
+        target: "http://1.14.125.238",
+        changeOrigin: true,
+        rewrite: (path) => {
+          console.log("Proxying request:", path);
+          return path.replace(/^\/drone/, "/drone");
         },
       },
     },
