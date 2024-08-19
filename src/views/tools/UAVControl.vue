@@ -36,7 +36,7 @@ export default {
 
       supported,
       // 无人机服务器地址
-      host: "http://192.168.137.30",
+      host: "",
       // 录制状态
       recording: false,
       // 录制实例
@@ -197,86 +197,84 @@ export default {
       );
     },
   },
-  beforeMount() {
+  mounted() {
     this.$axios.get("/drone/ip").then((res) => {
       this.host = res.data.data;
-    });
-  },
-  mounted() {
-    const that = this;
-    // 将图片复制到canvas上
-    const img = new Image();
-    img.src = `${this.host}:5000/video_feed`;
-    img.crossOrigin = "Anonymous";
-    const video = document.querySelector(".video");
-    const canvas = document.getElementById("canvas-feed");
-    const ctx = canvas.getContext("2d");
+      const that = this;
+      // 将图片复制到canvas上
+      const img = new Image();
+      img.src = `${this.host}:5000/video_feed`;
+      img.crossOrigin = "Anonymous";
+      const video = document.querySelector(".video");
+      const canvas = document.getElementById("canvas-feed");
+      const ctx = canvas.getContext("2d");
 
-    // 加载页面
-    const width = parseFloat(getComputedStyle(video).width);
-    const height = width * 0.454;
-    canvas.width = width;
-    canvas.height = height;
-    canvas.style.width = width + "px";
-    canvas.style.height = height + "px";
-    ctx.font = "20px Arial";
-    ctx.fillStyle = "white";
-    ctx.fillText("加载中...", canvas.width / 2 - 40, canvas.height / 3);
+      // 加载页面
+      const width = parseFloat(getComputedStyle(video).width);
+      const height = width * 0.454;
+      canvas.width = width;
+      canvas.height = height;
+      canvas.style.width = width + "px";
+      canvas.style.height = height + "px";
+      ctx.font = "20px Arial";
+      ctx.fillStyle = "white";
+      ctx.fillText("加载中...", canvas.width / 2 - 40, canvas.height / 3);
 
-    // 实时更新(fps=10)
-    img.onload = function () {
-      const ratio = img.height / img.width;
-      setInterval(() => {
-        const width = parseFloat(getComputedStyle(video).width);
-        const height = width * ratio;
-        canvas.width = width;
-        canvas.height = height;
-        canvas.style.width = width + "px";
-        canvas.style.height = height + "px";
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      }, 100);
-    };
+      // 实时更新(fps=10)
+      img.onload = function () {
+        const ratio = img.height / img.width;
+        setInterval(() => {
+          const width = parseFloat(getComputedStyle(video).width);
+          const height = width * ratio;
+          canvas.width = width;
+          canvas.height = height;
+          canvas.style.width = width + "px";
+          canvas.style.height = height + "px";
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        }, 100);
+      };
 
-    // 获取视频流
-    if (!supported) return;
-    this.mediaRecord = new MediaRecorder(canvas.captureStream(), {
-      mimeType: "video/webm;codecs=vp9",
-    });
-    this.mediaRecord.ondataavailable = function (e) {
-      const data = e.data;
-      if (data && data.size > 0) {
-        that.chunks.push(data);
-      }
-    };
-    this.mediaRecord.onstop = async function () {
-      notification.info({
-        message: "录制暂停",
-        description: "正在处理录制数据......",
-        placement: "bottomRight",
+      // 获取视频流
+      if (!supported) return;
+      this.mediaRecord = new MediaRecorder(canvas.captureStream(), {
+        mimeType: "video/webm;codecs=vp9",
       });
-      const duration = Date.now() - that.startTime;
-      const buggyBlob = new Blob(that.chunks, {
-        type: "video/webm;codecs=h264",
-      });
-      fixWebmDuration(buggyBlob, duration, { logger: false }).then(
-        function (fixedBlob) {
-          const downloadLink = URL.createObjectURL(fixedBlob);
-          const link = document.createElement("a");
-          link.href = downloadLink;
-          link.download =
-            dayjs(that.startTime).format("YYYY年MM月DD日HH时mm分ss秒") +
-            " 视频录制";
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          notification.success({
-            message: "录制成功",
-            description: "请注意浏览器右上方下载提示",
-            placement: "bottomRight",
-          });
-        },
-      );
-    };
+      this.mediaRecord.ondataavailable = function (e) {
+        const data = e.data;
+        if (data && data.size > 0) {
+          that.chunks.push(data);
+        }
+      };
+      this.mediaRecord.onstop = async function () {
+        notification.info({
+          message: "录制暂停",
+          description: "正在处理录制数据......",
+          placement: "bottomRight",
+        });
+        const duration = Date.now() - that.startTime;
+        const buggyBlob = new Blob(that.chunks, {
+          type: "video/webm;codecs=h264",
+        });
+        fixWebmDuration(buggyBlob, duration, { logger: false }).then(
+          function (fixedBlob) {
+            const downloadLink = URL.createObjectURL(fixedBlob);
+            const link = document.createElement("a");
+            link.href = downloadLink;
+            link.download =
+              dayjs(that.startTime).format("YYYY年MM月DD日HH时mm分ss秒") +
+              " 视频录制";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            notification.success({
+              message: "录制成功",
+              description: "请注意浏览器右上方下载提示",
+              placement: "bottomRight",
+            });
+          },
+        );
+      };
+    });
   },
 };
 </script>

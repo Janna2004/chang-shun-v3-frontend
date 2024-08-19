@@ -117,35 +117,80 @@ export default {
     },
     // 智能识别
     uploadImg(file) {
-      this.imgUrl = URL.createObjectURL(file);
-      this.curStep = 1;
-      this.isDetecting = true;
-      const formData = new FormData();
-      formData.append("image", file);
-      axios
-        .post("/chang-shun/ai/detect", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        })
-        .then((res) => {
-          this.detectResult = res.data;
-          if (res.data.state === 1) {
-            this.imgUrl = "data:image/jpeg;base64," + res.data.image;
-            this.detectInfoId = res.data.detection_info_id;
+      // 定义一个最大宽度和高度，用于压缩
+      const maxWidth = 800; 
+      const maxHeight = 800;
+
+      // 创建一个图片对象
+      const img = new Image();
+      const reader = new FileReader();
+
+      reader.onload = (e) => {
+        img.src = e.target.result;
+
+        img.onload = () => {
+          let width = img.width;
+          let height = img.height;
+
+          // 计算图片压缩后的尺寸
+          if (width > height) {
+            if (width > maxWidth) {
+              height *= maxWidth / width;
+              width = maxWidth;
+            }
+          } else {
+            if (height > maxHeight) {
+              width *= maxHeight / height;
+              height = maxHeight;
+            }
           }
-          this.curStep = 3;
-        })
-        .catch((error) => {
-          message.error("上传失败，请重试");
-          console.log("上传失败:", error);
-          setTimeout(() => {
-            this.refreshImg();
-          }, 1000);
-        })
-        .finally(() => {
-          this.isDetecting = false;
-        });
+
+          // 创建 canvas
+          const canvas = document.createElement("canvas");
+          canvas.width = width;
+          canvas.height = height;
+
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, width, height);
+
+          // 将 canvas 转换为 Blob 对象
+          canvas.toBlob((blob) => {
+            // 使用压缩后的 Blob 进行上传
+            this.imgUrl = URL.createObjectURL(blob);
+            this.curStep = 1;
+            this.isDetecting = true;
+
+            const formData = new FormData();
+            formData.append("image", blob, file.name); // 保持原文件名
+
+            axios
+              .post("/chang-shun/ai/detect", formData, {
+                headers: {
+                  "Content-Type": "multipart/form-data",
+                },
+              })
+              .then((res) => {
+                this.detectResult = res.data;
+                if (res.data.state === 1) {
+                  this.imgUrl = "data:image/jpeg;base64," + res.data.image;
+                  this.detectInfoId = res.data.detection_info_id;
+                }
+                this.curStep = 3;
+              })
+              .catch((error) => {
+                message.error("上传失败，请重试");
+                console.log("上传失败:", error);
+                setTimeout(() => {
+                  this.refreshImg();
+                }, 1000);
+              })
+              .finally(() => {
+                this.isDetecting = false;
+              });
+          }, "image/jpeg"); // 这里可以指定图片格式和质量
+        };
+      };
+      reader.readAsDataURL(file);
     },
     // 创建预警
     createAlert() {
